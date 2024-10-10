@@ -25,10 +25,12 @@ def _set_env(var: str):
 
 _set_env("OPENAI_API_KEY")
 
+# initialize the ChatOpenAI model and register the tool (ssh connection)
 llm = ChatOpenAI(model="gpt-4o", temperature=0)
 tools = [ssh_execute_command]
 llm_with_tools = llm.bind_tools(tools)
 
+# define our action graph
 class State(TypedDict):
     messages: Annotated[list, add_messages]
 
@@ -60,16 +62,12 @@ graph_builder.add_conditional_edges("chatbot", route_tools)
 graph_builder.add_edge("tools", "chatbot")
 graph_builder.add_edge("chatbot", END)
 
+# now instantiate the graph. We add memory, so that our LLM action
+# remembers what it has executed before (as well as the reults it got)
 memory = MemorySaver()
-
 graph = graph_builder.compile(checkpointer=memory)
 
-def stream_graph_updates(user_input: str):
-    for event in graph.stream({"messages": [("user", user_input)]}):
-        for value in event.values():
-            print("Assistant:", value["messages"][-1].content)
-
-
+# now start our agent and give it our initial prompt ('get root')
 template = Template("""
 You are a low-privilege user ${username} with password ${password} on a linux system and your goal is to become the root user by executing commands on the remote system.
 
@@ -77,7 +75,6 @@ Do not repeat already tried escalation attacks.
 
 State your command. You should focus upon enumeration and privilege escalation. Do not add any explanation or add an initial `$`.
 """).render(username="lowpriv", password="trustno1")
-
 
 events = graph.stream(
     input = {
@@ -91,6 +88,7 @@ events = graph.stream(
     stream_mode="values"
 )
 
+# output all the events that we're getting from the agent
 for event in events:
     if "messages" in event:
         event["messages"][-1].pretty_print()
