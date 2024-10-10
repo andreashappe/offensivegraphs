@@ -1,0 +1,8 @@
+site_name: Offensive Langgraph Playground
+theme:
+  name: material
+  features:
+    - search.suggest
+    - search.highlight
+plugins:
+  - blog
