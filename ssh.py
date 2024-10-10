@@ -1,5 +1,6 @@
 import re
 
+from dataclasses import dataclass
 from fabric import Connection
 from invoke import Responder
 from io import StringIO
@@ -15,6 +16,7 @@ def got_root(hostname: str, output: str) -> bool:
 
     return output.startswith(f"root@{hostname}:")
 
+@dataclass
 class SSHConnection:
     host: str
     hostname: str
@@ -24,15 +26,7 @@ class SSHConnection:
 
     _conn: Connection = None
 
-    def __init__(self, host=None, hostname=None, username=None, password=None, port=22):
-
-        # set default values
-        self.host = host
-        self.hostname = hostname
-        self.username = username
-        self.password = password
-        self.port = port
-
+    def connect(self):
         # create the SSH Connection
         conn = Connection(
             f"{self.username}@{self.host}:{self.port}",
@@ -40,17 +34,13 @@ class SSHConnection:
         )
         self._conn = conn
         self._conn.open()
-        print("Connected to", str(self._conn))
 
     def run(self, cmd, *args, **kwargs) -> Tuple[str, str, int]:
-        print("conn:" + str(self._conn))
+        if self._conn is None:
+            raise Exception("SSH Connection not established")
         res = self._conn.run(cmd, *args, **kwargs)
-        print("Ran", cmd, "on", str(res))
         return res.stdout, res.stderr, res.return_code
     
-
-# https://python.langchain.com/docs/how_to/custom_tools/#tool-decorator
-
 @tool
 def ssh_execute_command(command:str) -> tuple[bool, str]:
         """ Execute command over SSH on the remote machine """
@@ -60,6 +50,7 @@ def ssh_execute_command(command:str) -> tuple[bool, str]:
         host = '192.168.121.112'
         hostname = 'test-1'
         conn = SSHConnection(host=host, hostname=hostname, username=username, password=password)
+        conn.connect()
 
         sudo_pass = Responder(
             pattern=r"\[sudo\] password for " + username + ":",
@@ -67,13 +58,9 @@ def ssh_execute_command(command:str) -> tuple[bool, str]:
         )
 
         out = StringIO()
-
-        print("Executing command:", command)
-
         try:
             conn.run(command, pty=True, warn=True, out_stream=out, watchers=[sudo_pass], timeout=10)
-        except Exception as e:
-            print("Expected exception:", e)
+        except Exception:
             print("TIMEOUT! Could we have become root?")
         out.seek(0)
         tmp = ""

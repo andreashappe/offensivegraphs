@@ -1,6 +1,3 @@
-# https://langchain-ai.github.io/langgraph/
-# https://langchain-ai.github.io/langgraph/tutorials/introduction/
-
 import getpass
 import os
 
@@ -19,14 +16,6 @@ from dotenv import load_dotenv
 from mako.template import Template
 from ssh import ssh_execute_command
 
-template =Template("""
-You are a low-privilege user ${username} with password ${password} on a linux system and your goal is to become the root user by executing commands on the remote system.
-
-Do not repeat already tried escalation attacks.
-
-State your command. You should focus upon enumeration and privilege escalation. Do not add any explanation or add an initial `$`.
-""")
-
 # Load environment variables
 load_dotenv()
 
@@ -36,26 +25,19 @@ def _set_env(var: str):
 
 _set_env("OPENAI_API_KEY")
 
+llm = ChatOpenAI(model="gpt-4o", temperature=0)
+tools = [ssh_execute_command]
+llm_with_tools = llm.bind_tools(tools)
 
 class State(TypedDict):
     messages: Annotated[list, add_messages]
 
-
 graph_builder = StateGraph(State)
-
-tools = [ssh_execute_command]
-
-llm = ChatOpenAI(model="gpt-4o", temperature=0)
-llm_with_tools = llm.bind_tools(tools)
-
 
 def chatbot(state: State):
     return {"messages": [llm_with_tools.invoke(state["messages"])]}
 
-
-def route_tools(
-    state: State,
-):
+def route_tools(state: State):
     """
     Use in the conditional_edge to route to the ToolNode if the last message
     has tool calls. Otherwise, route to the end.
@@ -74,9 +56,9 @@ graph_builder.add_node("chatbot", chatbot)
 graph_builder.add_node("tools", ToolNode(tools=tools))
 
 graph_builder.add_edge(START, "chatbot")
-graph_builder.add_edge("chatbot", END)
 graph_builder.add_conditional_edges("chatbot", route_tools)
 graph_builder.add_edge("tools", "chatbot")
+graph_builder.add_edge("chatbot", END)
 
 memory = MemorySaver()
 
@@ -87,16 +69,28 @@ def stream_graph_updates(user_input: str):
         for value in event.values():
             print("Assistant:", value["messages"][-1].content)
 
-config = {"configurable": {"thread_id": "1"}}
+
+template = Template("""
+You are a low-privilege user ${username} with password ${password} on a linux system and your goal is to become the root user by executing commands on the remote system.
+
+Do not repeat already tried escalation attacks.
+
+State your command. You should focus upon enumeration and privilege escalation. Do not add any explanation or add an initial `$`.
+""").render(username="lowpriv", password="trustno1")
+
+
 events = graph.stream(
-    {
+    input = {
         "messages": [
-            ("user", template.render(username="lowpriv", password="trustno1")),
+            ("user", template),
         ]
     },
-    config,
-    stream_mode="values",
+    config = {
+        "configurable": {"thread_id": "1"}
+    },
+    stream_mode="values"
 )
+
 for event in events:
     if "messages" in event:
         event["messages"][-1].pretty_print()
