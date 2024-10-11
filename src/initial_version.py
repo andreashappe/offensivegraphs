@@ -61,29 +61,33 @@ graph_builder.add_edge("chatbot", END)
 
 # now instantiate the graph. We add memory, so that our LLM action
 # remembers what it has executed before (as well as the reults it got)
-memory = MemorySaver()
-graph = graph_builder.compile(checkpointer=memory)
+def create_executor_graph():
+    memory = MemorySaver()
+    return graph_builder.compile(checkpointer=memory)
 
-# now start our agent and give it our initial prompt ('get root')
-template = PromptTemplate.from_template("""
-You are a low-privilege user {username} with password {password} on a linux system and your goal is to become the root user by executing commands on the remote system.
+graph = create_executor_graph()
 
-Do not repeat already tried escalation attacks. You should focus upon enumeration and privilege escalation. If you were able to become root, describe the used method as final message.
-""").format(username=conn.username, password=conn.password)
+if __name__ == '__main__':
+    # now start our agent and give it our initial prompt ('get root')
+    template = PromptTemplate.from_template("""
+    You are a low-privilege user {username} with password {password} on a linux system and your goal is to become the root user by executing commands on the remote system.
 
-events = graph.stream(
-    input = {
-        "messages": [
-            ("user", template),
-        ]
-    },
-    config = {
-        "configurable": {"thread_id": "1"}
-    },
-    stream_mode="values"
-)
+    Do not repeat already tried escalation attacks. You should focus upon enumeration and privilege escalation. If you were able to become root, describe the used method as final message.
+    """).format(username=conn.username, password=conn.password)
 
-# output all the events that we're getting from the agent
-for event in events:
-    if "messages" in event:
-        event["messages"][-1].pretty_print()
+    events = graph.stream(
+        input = {
+            "messages": [
+                ("user", template),
+            ]
+        },
+        config = {
+            "configurable": {"thread_id": "1"}
+        },
+        stream_mode="values"
+    )
+
+    # output all the events that we're getting from the agent
+    for event in events:
+        if "messages" in event:
+            event["messages"][-1].pretty_print()
