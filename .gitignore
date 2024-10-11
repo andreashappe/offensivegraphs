@@ -3,6 +3,8 @@
 
 # python venv
 venv/
+.venv/
+
 
 # build artifacts
 __pycache__/
