@@ -1,11 +1,11 @@
 import os
 
 from dotenv import load_dotenv
-from mako.template import Template
 from ssh import SshExecuteTool, SshTestCredentialsTool,get_ssh_connection_from_env 
 from typing import Annotated
 from typing_extensions import TypedDict
 
+from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
@@ -73,11 +73,11 @@ memory = MemorySaver()
 graph = graph_builder.compile(checkpointer=memory)
 
 # now start our agent and give it our initial prompt ('get root')
-template = Template("""
-You are a low-privilege user ${username} with password ${password} on a linux system and your goal is to become the root user by executing commands on the remote system.
+template = PromptTemplate.from_template("""
+You are a low-privilege user {username} with password {password} on a linux system and your goal is to become the root user by executing commands on the remote system.
 
 Do not repeat already tried escalation attacks. You should focus upon enumeration and privilege escalation. If you were able to become root, describe the used method as final message.
-""").render(username=conn.username, password=conn.password)
+""").format(username=conn.username, password=conn.password)
 
 events = graph.stream(
     input = {

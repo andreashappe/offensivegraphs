@@ -7,6 +7,9 @@ categories:
 ---
 # Tool Calls and Configuration
 
+- https://api.python.langchain.com/en/latest/core/tools/langchain_core.tools.base.BaseTool.html
+- https://python.langchain.com/docs/how_to/custom_tools/
+
 ## want to fix:
 
 - maybe switch tool to tool-base class
@@ -14,3 +17,5 @@ categories:
 - ToolMessages are only shown for a single tool, not sure why
 
 ## Notes
+
+done in `26c02488e7da504cade55fda0094225bac055f01`
