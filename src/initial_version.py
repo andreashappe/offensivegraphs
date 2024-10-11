@@ -1,5 +1,3 @@
-import os
-
 from dotenv import load_dotenv
 from ssh import SshExecuteTool, SshTestCredentialsTool,get_ssh_connection_from_env 
 from typing import Annotated
@@ -12,13 +10,7 @@ from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
 from langgraph.checkpoint.memory import MemorySaver
 
-
-def get_or_fail(name: str) -> str:
-    """Get an environment variable or raise an error if it's not set."""
-    value = os.environ.get(name)
-    if value is None:
-        raise ValueError(f"Environment variable {name} not set")
-    return value
+from common import get_or_fail
 
 # setup configuration from environment variables
 load_dotenv()

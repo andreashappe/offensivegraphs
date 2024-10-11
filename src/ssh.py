@@ -1,5 +1,3 @@
-import os
-
 from dataclasses import dataclass
 from fabric import Connection
 from invoke import Responder
@@ -10,6 +8,8 @@ from typing import Tuple, Optional, Type
 
 from langchain_core.callbacks import CallbackManagerForToolRun
 from langchain_core.tools import BaseTool
+
+from common import get_or_fail
 
 @dataclass
 class SSHConnection:
@@ -54,7 +54,7 @@ class SshExecuteTool(BaseTool):
     name: str = "SshExecuteTool"
     description: str = "Execute command over SSH on the remote machine"
     args_schema: Type[BaseModel] = SshExecuteInput
-    return_direct: bool = True
+    return_direct: bool = False
     conn: SSHConnection
 
     def __init__(self, conn: SSHConnection):
@@ -95,7 +95,7 @@ class SshTestCredentialsTool(BaseTool):
     name: str = "SshTestCredentialsTool"
     description: str = "Test if username/password credentials are valid on the remote system."
     args_schema: Type[BaseModel] = SshTestCredentialsInput
-    return_direct: bool = True
+    return_direct: bool = False
     conn: SSHConnection
 
     def __init__(self, conn: SSHConnection):
@@ -114,12 +114,6 @@ class SshTestCredentialsTool(BaseTool):
         except paramiko.ssh_exception.AuthenticationException:
             return "Authentication error, credentials are wrong\n"
         
-def get_or_fail(name: str) -> str:
-    value = os.environ.get(name)
-    if value is None:
-        raise ValueError(f"Environment variable {name} not set")
-    return value
-
 def get_ssh_connection_from_env() -> SSHConnection:
     host = get_or_fail("TARGET_HOST")
     hostname = get_or_fail("TARGET_HOSTNAME")
