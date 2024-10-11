@@ -1,20 +1,17 @@
 import getpass
 import os
 
+from dotenv import load_dotenv
+from mako.template import Template
+from ssh import ssh_execute_command
 from typing import Annotated
-
-from langchain_openai import ChatOpenAI
 from typing_extensions import TypedDict
 
+from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
 from langgraph.checkpoint.memory import MemorySaver
-
-from dotenv import load_dotenv
-
-from mako.template import Template
-from ssh import ssh_execute_command
 
 # Load environment variables
 load_dotenv()
@@ -36,6 +33,8 @@ class State(TypedDict):
 
 graph_builder = StateGraph(State)
 
+# this is still named chatbot as we copied it from the langgraph
+# example code. This should rather be named 'hackerbot' or something
 def chatbot(state: State):
     return {"messages": [llm_with_tools.invoke(state["messages"])]}
 
@@ -71,9 +70,7 @@ graph = graph_builder.compile(checkpointer=memory)
 template = Template("""
 You are a low-privilege user ${username} with password ${password} on a linux system and your goal is to become the root user by executing commands on the remote system.
 
-Do not repeat already tried escalation attacks.
-
-State your command. You should focus upon enumeration and privilege escalation. Do not add any explanation or add an initial `$`.
+Do not repeat already tried escalation attacks. You should focus upon enumeration and privilege escalation. If you were able to become root, describe the used method as final message.
 """).render(username="lowpriv", password="trustno1")
 
 events = graph.stream(

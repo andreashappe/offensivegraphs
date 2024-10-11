@@ -16,8 +16,8 @@ Good starting background documentation:
 # project setup for beginners
 
 - git clone (with commit)
-- howto install dependencies
-- howto setup .env
+- how to install dependencies
+- how to setup .env
 
 # our starting situation
 
@@ -28,9 +28,15 @@ Good starting background documentation:
 
 - move SSH code into separate SSH file
 - implement a simple manually-written version
+- remove much of the old cargocult-ish fixes that might not be needed anymore (with modern LLMs)
 
 # TODO
 
-- the root check does not work!
 - maybe switch tool to tool-base class
 - config handling could be cleaner
+- ToolMessages are only shown for a single tool, not sure why
+
+## Other todos
+
+- can we replace the Make template engine with something else?
+- also output the graph

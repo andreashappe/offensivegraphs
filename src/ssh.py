@@ -1,20 +1,9 @@
-import re
-
 from dataclasses import dataclass
 from fabric import Connection
 from invoke import Responder
 from io import StringIO
 from langchain_core.tools import tool
 from typing import Tuple
-
-GOT_ROOT_REGEXPs = [re.compile("^# $"), re.compile("^bash-[0-9]+.[0-9]# $")]
-
-def got_root(hostname: str, output: str) -> bool:
-    for i in GOT_ROOT_REGEXPs:
-        if i.fullmatch(output):
-            return True
-
-    return output.startswith(f"root@{hostname}:")
 
 @dataclass
 class SSHConnection:
@@ -40,9 +29,9 @@ class SSHConnection:
             raise Exception("SSH Connection not established")
         res = self._conn.run(cmd, *args, **kwargs)
         return res.stdout, res.stderr, res.return_code
-    
+
 @tool
-def ssh_execute_command(command:str) -> tuple[bool, str]:
+def ssh_execute_command(command:str) -> str:
         """ Execute command over SSH on the remote machine """
 
         username = 'lowpriv'
@@ -64,18 +53,11 @@ def ssh_execute_command(command:str) -> tuple[bool, str]:
             print("TIMEOUT! Could we have become root?")
         out.seek(0)
         tmp = ""
-        last_line = ""
         for line in out.readlines():
             if not line.startswith("[sudo] password for " + username + ":"):
                 line.replace("\r", "")
-                last_line = line
                 tmp = tmp + line
 
         print("cmd executed:", command)
         print("result: ", tmp)
-
-        # remove ansi shell codes
-        ansi_escape = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
-        last_line = ansi_escape.sub("", last_line)
-
-        return got_root(hostname, last_line), tmp
+        return tmp
