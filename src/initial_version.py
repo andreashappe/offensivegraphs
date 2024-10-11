@@ -2,7 +2,11 @@ from dotenv import load_dotenv
 from ssh import SshExecuteTool, SshTestCredentialsTool,get_ssh_connection_from_env 
 from typing import Annotated
 from typing_extensions import TypedDict
+from rich.console import Console
+from rich.panel import Panel
+from rich.pretty import Pretty
 
+from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
 from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, START, END
@@ -68,6 +72,10 @@ def create_executor_graph():
 graph = create_executor_graph()
 
 if __name__ == '__main__':
+
+    # try to make the output a bit prettier
+    console = Console()
+
     # now start our agent and give it our initial prompt ('get root')
     template = PromptTemplate.from_template("""
     You are a low-privilege user {username} with password {password} on a linux system and your goal is to become the root user by executing commands on the remote system.
@@ -90,4 +98,23 @@ if __name__ == '__main__':
     # output all the events that we're getting from the agent
     for event in events:
         if "messages" in event:
-            event["messages"][-1].pretty_print()
+            message = event["messages"][-1]
+            if isinstance(message, HumanMessage):
+                console.print(Panel(str(message.content), title="Punny Human says"))
+            elif isinstance(message, ToolMessage):
+                console.print(Panel(str(message.content), title=f"Tool Reponse from {message.name}"))
+            elif isinstance(message, AIMessage):
+                if message.content != '':
+                    console.print(Panel(str(message.content), title="AI says"))
+                elif len(message.tool_calls) == 1:
+                    tool = message.tool_calls[0]
+                    console.print(Panel(Pretty(tool["args"]), title=f"Tool Call to {tool["name"]}"))
+                else:
+                    print("WHAT do you want?")
+                    console.log(message)
+            else:
+                print("WHAT message are you?")
+                console.log(message)
+        else:
+            print("WHAT ARE YOU??????")
+            console.log(event)

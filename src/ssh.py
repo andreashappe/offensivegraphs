@@ -80,9 +80,6 @@ class SshExecuteTool(BaseTool):
             if not line.startswith("[sudo] password for " + self.conn.username + ":"):
                 line.replace("\r", "")
                 tmp = tmp + line
-
-        print("cmd executed:", command)
-        print("result: ", tmp)
         return tmp
 
 class SshTestCredentialsInput(BaseModel):
@@ -105,7 +102,10 @@ class SshTestCredentialsTool(BaseTool):
         test_conn = self.conn.new_SSHConnection_with(username=username, password=password)
         try:
             test_conn.connect()
-            user = test_conn.run("whoami")[0].strip("\n\r ")
+            out = StringIO()
+            test_conn.run("whoami", pty=True, warn=True, out_stream=out)
+            out.seek(0)
+            user = out.readline().strip("\n\r ")
             if user == "root":
                 return "Login as root was successful\n"
             else:
