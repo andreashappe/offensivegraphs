@@ -9,6 +9,7 @@ categories:
 
 - https://api.python.langchain.com/en/latest/core/tools/langchain_core.tools.base.BaseTool.html
 - https://python.langchain.com/docs/how_to/custom_tools/
+- https://api.python.langchain.com/en/latest/tools/langchain_core.tools.tool.html
 
 ## want to fix:
 
@@ -19,3 +20,5 @@ categories:
 ## Notes
 
 done in `26c02488e7da504cade55fda0094225bac055f01`
+
+warning: initially, I got `return_direct` wrong leading to the following fix `576105f2a358c7aa6877d3bcf0395a5ec2997e7f`
