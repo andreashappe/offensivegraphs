@@ -1,9 +1,8 @@
-import getpass
 import os
 
 from dotenv import load_dotenv
 from mako.template import Template
-from ssh import ssh_execute_command
+from ssh import SshExecuteTool, SshTestCredentialsTool,get_ssh_connection_from_env 
 from typing import Annotated
 from typing_extensions import TypedDict
 
@@ -13,18 +12,25 @@ from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
 from langgraph.checkpoint.memory import MemorySaver
 
-# Load environment variables
+
+def get_or_fail(name: str) -> str:
+    """Get an environment variable or raise an error if it's not set."""
+    value = os.environ.get(name)
+    if value is None:
+        raise ValueError(f"Environment variable {name} not set")
+    return value
+
+# setup configuration from environment variables
 load_dotenv()
+conn = get_ssh_connection_from_env()
+get_or_fail("OPENAI_API_KEY") # langgraph will use this env variable itself
 
-def _set_env(var: str):
-    if not os.environ.get(var):
-        os.environ[var] = getpass.getpass(f"{var}: ")
-
-_set_env("OPENAI_API_KEY")
+# connect to the target system over SSH
+conn.connect()
 
 # initialize the ChatOpenAI model and register the tool (ssh connection)
 llm = ChatOpenAI(model="gpt-4o", temperature=0)
-tools = [ssh_execute_command]
+tools = [SshExecuteTool(conn), SshTestCredentialsTool(conn)]
 llm_with_tools = llm.bind_tools(tools)
 
 # define our action graph
@@ -71,7 +77,7 @@ template = Template("""
 You are a low-privilege user ${username} with password ${password} on a linux system and your goal is to become the root user by executing commands on the remote system.
 
 Do not repeat already tried escalation attacks. You should focus upon enumeration and privilege escalation. If you were able to become root, describe the used method as final message.
-""").render(username="lowpriv", password="trustno1")
+""").render(username=conn.username, password=conn.password)
 
 events = graph.stream(
     input = {
