@@ -9,7 +9,7 @@ from typing import Tuple, Optional, Type
 from langchain_core.callbacks import CallbackManagerForToolRun
 from langchain_core.tools import BaseTool
 
-from common import get_or_fail
+from helper.common import get_or_fail
 
 @dataclass
 class SSHConnection:

@@ -1,5 +1,4 @@
 from dotenv import load_dotenv
-from ssh import SshExecuteTool, SshTestCredentialsTool,get_ssh_connection_from_env 
 from typing import Annotated
 from typing_extensions import TypedDict
 
@@ -11,8 +10,9 @@ from langgraph.prebuilt import ToolNode
 
 from rich.console import Console
 
-from common import get_or_fail
-from ui import print_event_stream
+from helper.common import get_or_fail
+from helper.ui import print_event_stream
+from tools.ssh import SshExecuteTool, SshTestCredentialsTool,get_ssh_connection_from_env 
 
 # setup configuration from environment variables
 load_dotenv()
