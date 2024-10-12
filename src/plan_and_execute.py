@@ -10,6 +10,8 @@ from langgraph.graph import StateGraph, START, END
 
 from helper.common import get_or_fail
 from tools.ssh import get_ssh_connection_from_env 
+from graphs.initial_version import create_chat_tool_agent_graph
+
 from initial_version import graph as executor_graph
 
 # setup configuration from environment variables
