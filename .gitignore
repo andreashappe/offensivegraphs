@@ -4,6 +4,7 @@
 # python venv
 venv/
 .venv/
+.python-version
 
 
 # build artifacts
