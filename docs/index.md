@@ -6,6 +6,8 @@ We hope that this shared repository with its easy-to-use examples, along with th
 
 - [Andreas](https://github.com/andreashappe) works on using LLMs for offensive security and sees the potential of LLMs to reduce tedious tasks and make security more accessible. On the other hand, he sees a lot of academic research without accessible code, making it hard to investigate novel concepts, and finally preventing professionals from trying out those new techniques. Using LLMs for security is easier than you think.
 
+- [Jürgen](https://github.com/brandl) covers the blue team, forensic analysis side of the team. His main interest in this project creating a realistic attack emulation with high visiblilty and counterfactuals for his master thesis on the topic of causal inference on cyber attack artifacts.
+
 This is a living project, changing over time. Contributions and collaborators are always welcome.
 
 ## How does this look like?

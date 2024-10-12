@@ -7,7 +7,7 @@ categories:
 ---
 # First Steps and Initial Version
 
-This started when [Juergen]() contacted [Andreas]() as he needed an automated attacker emulation for one of his defensive projects. Andreas wrote the initial version of [hackingBuddyGPT](https://hackingbuddy.ai) in March 2023 (roughly 18 months ago) and much of the codebase was written for older, less-sophisticated, LLMs. Juergen had experience with [LangGraph](https://www.langchain.com/langgraph), so we decided to play around with using langgraph for offensive security.
+This started when [Jürgen]() contacted [Andreas]() as he needed an automated attacker emulation for one of his defensive projects. Andreas wrote the initial version of [hackingBuddyGPT](https://hackingbuddy.ai) in March 2023 (roughly 18 months ago) and much of the codebase was written for older, less-sophisticated, LLMs. Juergen had experience with [LangGraph](https://www.langchain.com/langgraph), so we decided to play around with using langgraph for offensive security.
 
 ## Scencario and Starting Situation
 
