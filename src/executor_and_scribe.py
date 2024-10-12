@@ -52,8 +52,8 @@ def scribe(state: State):
         tool_response = messages[-1].content
     notes = state.get("notes", f"The task is {mission}")
     return {"notes": llm.invoke(f""" You are tasked with taking notes of everything we learned about this linux system in a structured way.
-                                Keep your notes like a high level structured summary in markdown and prune them regularly to only keep relevant information.
-                                Try to stay within 25 Lines only write about things we know.
+                                Keep your notes containing only hard facts in markdown and prune them regularly to only keep relevant facts.
+                                Try to stay within 25 Lines only write about things we know not about the task.
                                 Here are your current notes:
                                 {notes} 
                                 Here is a toolcwe called {tool_call} 
@@ -92,12 +92,6 @@ def create_executor_graph():
     return graph_builder.compile(checkpointer=memory)
 
 graph = create_executor_graph()
-print(graph.get_graph(xray=True).draw_ascii())
-
-
-
-import sys
-sys.exit(1)
 
 if __name__ == '__main__':
     # Initialize the console and layout
