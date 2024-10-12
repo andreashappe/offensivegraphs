@@ -8,7 +8,6 @@ from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
-from langgraph.checkpoint.memory import MemorySaver
 
 from rich.console import Console
 
@@ -65,8 +64,7 @@ graph_builder.add_edge("chatbot", END)
 # now instantiate the graph. We add memory, so that our LLM action
 # remembers what it has executed before (as well as the reults it got)
 def create_executor_graph():
-    memory = MemorySaver()
-    return graph_builder.compile(checkpointer=memory)
+    return graph_builder.compile()
 
 graph = create_executor_graph()
 
