@@ -8,6 +8,10 @@ We hope that this shared repository with its easy-to-use examples, along with th
 
 This is a living project, changing over time. Contributions and collaborators are always welcome.
 
+## How does this look like?
+
+<video src="/screencast_offensive_graph.mp4" controls></video>
+
 ## How is this different to a non-security Project?
 
 Honestly, not much. While we are using specialized tools (funtions that LLMs can execute) and are often intentionally malicious prompts, the techniques behind, esp. when it comes to task planing, are the same as with 'normal' use-cases.
