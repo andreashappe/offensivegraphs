@@ -2,10 +2,7 @@ from dotenv import load_dotenv
 from ssh import SshExecuteTool, SshTestCredentialsTool,get_ssh_connection_from_env 
 
 from rich.console import Console
-from rich.panel import Panel
-from rich.pretty import Pretty
 
-from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
 from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
