@@ -14,7 +14,6 @@ from common import get_or_fail
 @dataclass
 class SSHConnection:
     host: str
-    hostname: str
     username: str
     password: str
     port: int = 22
@@ -36,10 +35,9 @@ class SSHConnection:
         res = self._conn.run(cmd, *args, **kwargs)
         return res.stdout, res.stderr, res.return_code
     
-    def new_SSHConnection_with(self, *, host=None, hostname=None, username=None, password=None, port=None) -> "SSHConnection":
+    def new_SSHConnection_with(self, *, host=None, username=None, password=None, port=None) -> "SSHConnection":
         return SSHConnection(
             host=host or self.host,
-            hostname=hostname or self.hostname,
             username=username or self.username,
             password=password or self.password,
             port=port or self.port,
@@ -116,8 +114,7 @@ class SshTestCredentialsTool(BaseTool):
         
 def get_ssh_connection_from_env() -> SSHConnection:
     host = get_or_fail("TARGET_HOST")
-    hostname = get_or_fail("TARGET_HOSTNAME")
     username = get_or_fail("TARGET_USERNAME")
     password = get_or_fail("TARGET_PASSWORD")
 
-    return SSHConnection(host=host, hostname=hostname, username=username, password=password)
+    return SSHConnection(host=host, username=username, password=password)
