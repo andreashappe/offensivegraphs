@@ -23,6 +23,8 @@ The following langgraph pages give good background knowledge:
 
 ## The First Prototype
 
+![Concept](initial_version_conceptual.drawio.png)
+
 This prototype source code can be found [in the github history](https://github.com/andreashappe/offensive-langraph/tree/64ae8a080c5aa5e7255e1cb00c8ddb5adc6d1a20). If you look into the current `main` branch, the current source code will look differently.
 
 We split the functionality into two files: `ssh.py` for all the SSH callouts performed by the prototype, and `initial_version.py` containg the actual prototype logic.
