@@ -1,7 +1,7 @@
 ---
 authors:
     - andreashappe
-date: 2024-10-11
+date: 2024-10-12
 categories:
     - 'initial journey'
 ---
