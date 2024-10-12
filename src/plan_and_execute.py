@@ -3,13 +3,13 @@ import time
 
 from dotenv import load_dotenv
 from planner_and_execute_linear import Response, get_planner_graph, get_replanner_graph, PlanExecute
-from ssh import get_ssh_connection_from_env 
 
 from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, START, END
 
-from common import get_or_fail
+from helper.common import get_or_fail
+from tools.ssh import get_ssh_connection_from_env 
 from initial_version import graph as executor_graph
 
 # setup configuration from environment variables

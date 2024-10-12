@@ -1,15 +1,12 @@
 import operator
 
-from langchain_core.prompts import ChatPromptTemplate
-
 from typing import Annotated, List, Tuple, Union
 from typing_extensions import TypedDict
-
 from pydantic import BaseModel, Field
 
+from langchain_core.prompts import ChatPromptTemplate
 
 ### Planner Stuff
-
 class PlanExecute(TypedDict):
     input: str
     plan: List[str]
