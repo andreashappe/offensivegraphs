@@ -80,14 +80,14 @@ def should_end(state: PlanExecute):
 
 def create_plan_and_execute_graph(llm, execute_step):
 
-    async def plan_step(state: PlanExecute):
+    def plan_step(state: PlanExecute):
         planner = planner_prompt | llm.with_structured_output(Plan)
-        plan = await planner.ainvoke({"messages": [("user", state["input"])]})
+        plan = planner.invoke({"messages": [("user", state["input"])]})
         return {"plan": plan.steps}
 
-    async def replan_step(state: PlanExecute):
+    def replan_step(state: PlanExecute):
         replanner = replanner_prompt | llm.with_structured_output(Act)
-        output = await replanner.ainvoke(state)
+        output = replanner.invoke(state)
         if isinstance(output.action, Response):
             return {"response": output.action.response}
         else:

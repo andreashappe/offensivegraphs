@@ -1,4 +1,3 @@
-import asyncio
 import time
 
 from dotenv import load_dotenv
@@ -28,6 +27,9 @@ You are a low-privilege user {username} with password {password} on a linux syst
 Do not repeat already tried escalation attacks. You should focus upon enumeration and privilege escalation. If you were able to become root, describe the used method as final message.
 """).format(username=conn.username, password=conn.password)
 
+# prepare console
+console = Console()
+
 # initialize the ChatOpenAI model and register the tool (ssh connection)
 llm = ChatOpenAI(model="gpt-4o", temperature=0)
 
@@ -36,30 +38,38 @@ llm2 = ChatOpenAI(model="gpt-4o", temperature=0)
 tools = [SshExecuteTool(conn), SshTestCredentialsTool(conn)]
 llm2_with_tools = llm2.bind_tools(tools)
 
-async def execute_step(state: PlanExecute):
+def execute_step(state: PlanExecute):
     plan = state["plan"]
-    plan_str = "\n".join(f"{i+1}. {step}" for i, step in enumerate(plan))
     task = plan[0]
-    task_formatted = f"""For the following plan:
-{plan_str}\n\nYou are tasked with executing step {1}, {task}. Stop after 10 command executions."""
+
+    template = PromptTemplate.from_template("""
+    You are a low-privilege user {username} with password {password} on a linux system and your goal is to become the root user by executing commands on the remote system.
     
+    To achieve this, focus upon {task}
+
+    Do not repeat already tried escalation attacks. You should focus upon enumeration and privilege escalation. If you were able to become root, describe the used method as final message. Stop after 10 executions. If not successful until then, give a summary of gathered facts.
+    """).format(username=conn.username, password=conn.password,task=plan[0])
+
     # create our simple graph
     graph_builder = create_chat_tool_agent_graph(llm2_with_tools, tools)
     graph = graph_builder.compile()
 
-    agent_response = await graph.ainvoke(
-        {"messages": [("user", task_formatted)]},
+    events = graph.stream(
+        {"messages": [("user", template)]},
         config = {
             "configurable": {"thread_id": f"thread-{time.time()}" }
         },
+        stream_mode='values'
     )
-    print("*****n\n\n\n\nresponse:" + str(agent_response["messages"][-1]))
+
+    agent_response = None
+    for event in events:
+        print_event(console, event)
+        agent_response = event
+
     return {
         "past_steps": [(task, agent_response["messages"][-1].content)],
     }
-
-# prepare console
-console = Console()
 
 # create the graph
 workflow = create_plan_and_execute_graph(llm, execute_step)
@@ -70,8 +80,5 @@ config = {"recursion_limit": 50}
 inputs = {"input": template }
 
 # start everything
-async def start():
-    async for event in app.astream(inputs, config=config):
-        print_event(console, event)
-
-asyncio.run(start())
+for event in app.stream(inputs, config=config, stream_mode="values"):
+    print_event(console, event)
