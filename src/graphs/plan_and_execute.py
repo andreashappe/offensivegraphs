@@ -7,20 +7,7 @@ from pydantic import BaseModel, Field
 from langchain_core.prompts import ChatPromptTemplate
 from langgraph.graph import StateGraph, START, END
 
-### Planner Node
-
-class PlanExecute(TypedDict):
-    input: str
-    plan: List[str]
-    past_steps: Annotated[List[Tuple], operator.add]
-    response: str # response from the agent to the user
-
-class Plan(BaseModel):
-    """Plan to follow in future"""
-
-    steps: List[str] = Field(
-        description="different steps to follow, should be in sorted order"
-    )
+### Prompts
 
 planner_prompt = ChatPromptTemplate.from_messages(
     [
@@ -33,20 +20,6 @@ The result of the final step should be the final answer. Make sure that each ste
         ("placeholder", "{messages}"),
     ]
 )
-
-### Replanner Node
-
-class Response(BaseModel):
-    """Response to user."""
-    response: str
-
-class Act(BaseModel):
-    """Action to perform."""
-
-    action: Union[Response, Plan] = Field(
-        description="Action to perform. If you want to respond to user, use Response. "
-        "If you need to further use tools to get the answer, use Plan."
-    )
 
 replanner_prompt = ChatPromptTemplate.from_template(
     """For the given objective, come up with a simple step by step plan. \
@@ -68,17 +41,44 @@ If you were not able to complete the task, stop after 15 planning steps and give
 """
 )
 
-### helper stuff
+### Data Structures: Our State Structure
 
-def should_end(state: PlanExecute):
-    if "response" in state and state["response"]:
-        return END
-    else:
-        return "agent"
+### Data Structures: LLM Responses
+
+class PlanExecute(TypedDict):
+    input: str
+    plan: List[str]
+    past_steps: Annotated[List[Tuple], operator.add]
+    response: str # response from the agent to the user
+
+class Plan(BaseModel):
+    """Plan to follow in future"""
+
+    steps: List[str] = Field(
+        description="different steps to follow, should be in sorted order"
+    )
+
+class Response(BaseModel):
+    """Response to user."""
+    response: str
+
+class Act(BaseModel):
+    """Action to perform."""
+
+    action: Union[Response, Plan] = Field(
+        description="Action to perform. If you want to respond to user, use Response. "
+        "If you need to further use tools to get the answer, use Plan."
+    )
 
 ### create the graph
 
 def create_plan_and_execute_graph(llm, execute_step):
+
+    def should_end(state: PlanExecute):
+        if "response" in state and state["response"]:
+            return END
+        else:
+            return "agent"
 
     def plan_step(state: PlanExecute):
         planner = planner_prompt | llm.with_structured_output(Plan)

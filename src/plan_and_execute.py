@@ -20,13 +20,6 @@ get_or_fail("OPENAI_API_KEY") # langgraph will use this env variable itself
 conn = get_ssh_connection_from_env()
 conn.connect()
 
-# now start our agent and give it our initial prompt ('get root')
-template = PromptTemplate.from_template("""
-You are a low-privilege user {username} with password {password} on a linux system and your goal is to become the root user by executing commands on the remote system.
-
-Do not repeat already tried escalation attacks. You should focus upon enumeration and privilege escalation. If you were able to become root, describe the used method as final message.
-""").format(username=conn.username, password=conn.password)
-
 # prepare console
 console = Console()
 
@@ -78,6 +71,13 @@ print(app.get_graph(xray=True).draw_ascii())
 
 config = {"recursion_limit": 50}
 inputs = {"input": template }
+
+# now start our agent and give it our initial prompt ('get root')
+template = PromptTemplate.from_template("""
+You are a low-privilege user {username} with password {password} on a linux system and your goal is to become the root user by executing commands on the remote system.
+
+Do not repeat already tried escalation attacks. You should focus upon enumeration and privilege escalation. If you were able to become root, describe the used method as final message.
+""").format(username=conn.username, password=conn.password)
 
 # start everything
 for event in app.stream(inputs, config=config, stream_mode="values"):
