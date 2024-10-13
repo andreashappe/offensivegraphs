@@ -2,16 +2,16 @@ import asyncio
 import time
 
 from dotenv import load_dotenv
-from planner_and_execute_linear import Response, get_planner_graph, get_replanner_graph, PlanExecute
+from graphs.plan_and_execute import PlanExecute
 
 from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
-from langgraph.graph import StateGraph, START, END
 
 from helper.common import get_or_fail
 from tools.ssh import get_ssh_connection_from_env 
 from graphs.initial_version import create_chat_tool_agent_graph
 
+from graphs.plan_and_execute import create_plan_and_execute_graph
 from initial_version import graph as executor_graph
 
 # setup configuration from environment variables
@@ -28,9 +28,6 @@ Do not repeat already tried escalation attacks. You should focus upon enumeratio
 
 # initialize the ChatOpenAI model and register the tool (ssh connection)
 llm = ChatOpenAI(model="gpt-4o", temperature=0)
-
-planner = get_planner_graph(llm)
-replanner = get_replanner_graph(llm)
 
 async def execute_step(state: PlanExecute):
     plan = state["plan"]
@@ -49,40 +46,8 @@ async def execute_step(state: PlanExecute):
         "past_steps": [(task, agent_response["messages"][-1].content)],
     }
 
-async def plan_step(state: PlanExecute):
-    plan = await planner.ainvoke({"messages": [("user", state["input"])]})
-    return {"plan": plan.steps}
-
-async def replan_step(state: PlanExecute):
-    output = await replanner.ainvoke(state)
-    if isinstance(output.action, Response):
-        return {"response": output.action.response}
-    else:
-        return {"plan": output.action.steps}
-
-def should_end(state: PlanExecute):
-    if "response" in state and state["response"]:
-        return END
-    else:
-        return "agent"
-
-# TODO: maybe we should rename PlanExecute to TaskPlan or something similar
-workflow = StateGraph(PlanExecute)
-
-# Add the nodes
-workflow.add_node("planner", plan_step)
-workflow.add_node("agent", execute_step)
-workflow.add_node("replan", replan_step)
-
-# set the start node
-workflow.add_edge(START, "planner")
-
-# configure links between nodes
-workflow.add_edge("planner", "agent")
-workflow.add_edge("agent", "replan")
-workflow.add_conditional_edges("replan", should_end)
-
 # create the graph
+workflow = create_plan_and_execute_graph(llm, execute_step)
 app = workflow.compile()
 print(app.get_graph(xray=True).draw_ascii())
 

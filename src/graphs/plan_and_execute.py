@@ -5,8 +5,10 @@ from typing_extensions import TypedDict
 from pydantic import BaseModel, Field
 
 from langchain_core.prompts import ChatPromptTemplate
+from langgraph.graph import StateGraph, START, END
 
-### Planner Stuff
+### Planner Node
+
 class PlanExecute(TypedDict):
     input: str
     plan: List[str]
@@ -32,7 +34,7 @@ The result of the final step should be the final answer. Make sure that each ste
     ]
 )
 
-### Replanner Stuff
+### Replanner Node
 
 class Response(BaseModel):
     """Response to user."""
@@ -66,10 +68,44 @@ If you were not able to complete the task, stop after 15 planning steps and give
 """
 )
 
-### Integration
+### helper stuff
 
-def get_planner_graph(llm):
-    return planner_prompt | llm.with_structured_output(Plan)
+def should_end(state: PlanExecute):
+    if "response" in state and state["response"]:
+        return END
+    else:
+        return "agent"
 
-def get_replanner_graph(llm):
-    return replanner_prompt | llm.with_structured_output(Act)
+### create the graph
+
+def create_plan_and_execute_graph(llm, execute_step):
+
+    async def plan_step(state: PlanExecute):
+        planner = planner_prompt | llm.with_structured_output(Plan)
+        plan = await planner.ainvoke({"messages": [("user", state["input"])]})
+        return {"plan": plan.steps}
+
+    async def replan_step(state: PlanExecute):
+        replanner = replanner_prompt | llm.with_structured_output(Act)
+        output = await replanner.ainvoke(state)
+        if isinstance(output.action, Response):
+            return {"response": output.action.response}
+        else:
+            return {"plan": output.action.steps}
+
+    workflow = StateGraph(PlanExecute)
+
+    # Add the nodes
+    workflow.add_node("planner", plan_step)
+    workflow.add_node("agent", execute_step)
+    workflow.add_node("replan", replan_step)
+
+    # set the start node
+    workflow.add_edge(START, "planner")
+
+    # configure links between nodes
+    workflow.add_edge("planner", "agent")
+    workflow.add_edge("agent", "replan")
+    workflow.add_conditional_edges("replan", should_end)
+
+    return workflow
