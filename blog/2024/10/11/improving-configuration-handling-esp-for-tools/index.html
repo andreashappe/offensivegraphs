@@ -1,0 +1,795 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../../10/first-steps-and-initial-version/">
+      
+      
+        <link rel="next" href="../../12/simplify-our-tool-calling-agent-through-create_react_agent/">
+      
+      
+      <link rel="icon" href="../../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.40">
+    
+    
+      
+        <title>Improving Configuration Handling, esp. for Tools - Offensive Langgraph Playground</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.8c3ca2c6.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#improving-configuration-handling-esp-for-tools" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../../.." title="Offensive Langgraph Playground" class="md-header__button md-logo" aria-label="Offensive Langgraph Playground" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Offensive Langgraph Playground
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Improving Configuration Handling, esp. for Tools
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../../.." title="Offensive Langgraph Playground" class="md-nav__button md-logo" aria-label="Offensive Langgraph Playground" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Offensive Langgraph Playground
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Welcome to the Playground
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Blog
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Blog
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      <a href="../../../../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Blog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Archive
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            Archive
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../archive/2024/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2024
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Categories
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            Categories
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/initial-journey/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    initial-journey
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/planning-and-decision-making/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    planning-and-decision-making
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#big-picture" class="md-nav__link">
+    <span class="md-ellipsis">
+      Big Picture
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#making-our-tool-configurable-by-switching-to-basetool" class="md-nav__link">
+    <span class="md-ellipsis">
+      Making our Tool configurable by switching to BaseTool
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#improving-the-configuration-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Improving the Configuration Handling
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+  <div class="md-content md-content--post" data-md-component="content">
+    <div class="md-sidebar md-sidebar--post" data-md-component="sidebar" data-md-type="navigation">
+      <div class="md-sidebar__scrollwrap">
+        <div class="md-sidebar__inner md-post">
+          <nav class="md-nav md-nav--primary">
+            <div class="md-post__back">
+              <div class="md-nav__title md-nav__container">
+                <a href="../../../../" class="md-nav__link">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+                  <span class="md-ellipsis">
+                    Back to index
+                  </span>
+                </a>
+              </div>
+            </div>
+            
+              <div class="md-post__authors md-typeset">
+                
+                  <div class="md-profile md-post__profile">
+                    <span class="md-author md-author--long">
+                      <img src="https://avatars.githubusercontent.com/u/20667?v=4" alt="Andreas Happe">
+                    </span>
+                    <span class="md-profile__description">
+                      <strong>
+                        
+                          <a href="https://github.com/andreashappe">Andreas Happe</a>
+                        
+                      </strong>
+                      <br>
+                      Creator
+                    </span>
+                  </div>
+                
+              </div>
+            
+            <ul class="md-post__meta md-nav__list">
+              <li class="md-nav__item md-nav__item--section">
+                <div class="md-post__title">
+                  <span class="md-ellipsis">
+                    Metadata
+                  </span>
+                </div>
+                <nav class="md-nav">
+                  <ul class="md-nav__list">
+                    <li class="md-nav__item">
+                      <div class="md-nav__link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5z"/></svg>
+                        <time datetime="2024-10-11 00:00:00" class="md-ellipsis">October 11, 2024</time>
+                      </div>
+                    </li>
+                    
+                    
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 3v15h3V3zm3 2 4 13 3-1-4-13zM5 5v13h3V5zM3 19v2h18v-2z"/></svg>
+                          <span class="md-ellipsis">
+                            in
+                            
+                              <a href="../../../../category/initial-journey/">initial-journey</a></span>
+                        </div>
+                      </li>
+                    
+                    
+                      
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7z"/></svg>
+                          <span class="md-ellipsis">
+                            
+                              5 min read
+                            
+                          </span>
+                        </div>
+                      </li>
+                    
+                  </ul>
+                </nav>
+              </li>
+            </ul>
+          </nav>
+          
+        </div>
+      </div>
+    </div>
+    <article class="md-content__inner md-typeset">
+      
+        
+
+
+<h1 id="improving-configuration-handling-esp-for-tools">Improving Configuration Handling, esp. for Tools</h1>
+<p>While being quite happy that the <a href="">initial prototype</a> worked within hours, its code was very prototype-y, i.e., much of its configuration was hard-coded. In a second step, we want to fix this by making our target information (the SSH connection) configurable and remvoe all hard-coded credentials from the code.</p>
+<h2 id="big-picture">Big Picture</h2>
+<p>We are already using <a href="https://pypi.org/project/python-dotenv/">python-dotenv</a> for some of our configuration so it makes sense to further utilize this for more configuration data. In the improved implementation, our <code>.env</code> will look like this:</p>
+<div class="language-ini highlight"><span class="filename">.env: Example configuration</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="na">OPENAI_API_KEY</span><span class="o">=</span><span class="s">&#39;secret openai API key&#39;</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="na">TARGET_HOST</span><span class="o">=</span><span class="s">192.168.121.112</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="na">TARGET_HOSTNAME</span><span class="o">=</span><span class="s">&#39;test-1&#39;</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="na">TARGET_USERNAME</span><span class="o">=</span><span class="s">&#39;lowpriv&#39;</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="na">TARGET_PASSWORD</span><span class="o">=</span><span class="s">&#39;trustno1&#39;</span>
+</span></code></pre></div>
+<p>The prototype will read this for configuration data. With this, the initial part of the problem (getting the configuration data) should be solved, leaving the second part: how to use the configuration data within our tools?</p>
+<p>After looking into the <a href="https://api.python.langchain.com/en/latest/tools/langchain_core.tools.tool.html">@tool annotation</a> for functions, this did not look like the perfect approach. Instead we opted towards subclassing <a href="https://api.python.langchain.com/en/latest/core/tools/langchain_core.tools.base.BaseTool.html">BaseTool</a>. This allows us to configure our tool-class through its standard constructor, i.e., pass the <code>SSHConnection</code> into it, and then use the connection when the tool sis called by the LLM through its <code>_run()</code> method.</p>
+<p>You can find the resulting source code in <a href="https://github.com/andreashappe/offensive-langgraph/tree/26c02488e7da504cade55fda0094225bac055f01">this github version</a>. Please note, that I had a bug initially (<a href="https://github.com/andreashappe/offensive-langgraph/commit/576105f2a358c7aa6877d3bcf0395a5ec2997e7f">fixed here</a>). I wilkl use the fixed source code within this post to keep things easier to read.</p>
+<p>Let's start with our updated tool that will be configurable:</p>
+<h2 id="making-our-tool-configurable-by-switching-to-basetool">Making our Tool configurable by switching to <code>BaseTool</code></h2>
+<p>You can find the full source code at <a href="https://github.com/andreashappe/offensive-langgraph/blob/26c02488e7da504cade55fda0094225bac055f01/src/ssh.py">within github</a>. This change was pretty straight-forward.</p>
+<p>Instead of writing a function, we now create a class for each tool. We have to subclass <a href="https://api.python.langchain.com/en/latest/tools/langchain_core.tools.BaseTool.html">BaseTool</a>, the parameters for our tool are now defined in a separate class which is a subclass of <code>BaseModel</code>:</p>
+<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">ssh.py: switching to BaseModel</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-48">48</a></span>
+<span class="normal"><a href="#__codelineno-1-49">49</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-48"><a id="__codelineno-1-48" name="__codelineno-1-48"></a><span class="k">class</span> <span class="nc">SshExecuteInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="__span-1-49"><a id="__codelineno-1-49" name="__codelineno-1-49"></a>    <span class="n">command</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;the command to execute&quot;</span><span class="p">)</span>
+</span></code></pre></div></td></tr></table></div>
+<p>Now for the tool class:</p>
+<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">ssh.py: switching to BaseModel</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-51">51</a></span>
+<span class="normal"><a href="#__codelineno-2-52">52</a></span>
+<span class="normal"><a href="#__codelineno-2-53">53</a></span>
+<span class="normal"><a href="#__codelineno-2-54">54</a></span>
+<span class="normal"><a href="#__codelineno-2-55">55</a></span>
+<span class="normal"><a href="#__codelineno-2-56">56</a></span>
+<span class="normal"><a href="#__codelineno-2-57">57</a></span>
+<span class="normal"><a href="#__codelineno-2-58">58</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-51"><a id="__codelineno-2-51" name="__codelineno-2-51"></a><span class="c1"># Note: It&#39;s important that every field has type hints. BaseTool is a</span>
+</span><span id="__span-2-52"><a id="__codelineno-2-52" name="__codelineno-2-52"></a><span class="c1"># Pydantic class and not having type hints can lead to unexpected behavior.</span>
+</span><span id="__span-2-53"><a id="__codelineno-2-53" name="__codelineno-2-53"></a><span class="k">class</span> <span class="nc">SshExecuteTool</span><span class="p">(</span><span class="n">BaseTool</span><span class="p">):</span>
+</span><span id="__span-2-54"><a id="__codelineno-2-54" name="__codelineno-2-54"></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;SshExecuteTool&quot;</span>
+</span><span id="__span-2-55"><a id="__codelineno-2-55" name="__codelineno-2-55"></a>    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Execute command over SSH on the remote machine&quot;</span>
+</span><span id="__span-2-56"><a id="__codelineno-2-56" name="__codelineno-2-56"></a>    <span class="n">args_schema</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">]</span> <span class="o">=</span> <span class="n">SshExecuteInput</span>
+</span><span id="__span-2-57"><a id="__codelineno-2-57" name="__codelineno-2-57"></a>    <span class="n">return_direct</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="__span-2-58"><a id="__codelineno-2-58" name="__codelineno-2-58"></a>    <span class="n">conn</span><span class="p">:</span> <span class="n">SSHConnection</span>
+</span></code></pre></div></td></tr></table></div>
+<p>You can see that we are now using instance variables (<code>name</code> and <code>description</code>) to describe the tool. <code>args_schema</code> points to the class that describes our accepted input parameters. <code>return_direct</code> is set to <code>False</code>. If set to <code>True</code>, langgraph agents will stop when the Tool stops. This is not what we intend, as the output of the Tool should be passed on to the next <code>node</code> in our case.</p>
+<p>Finally <code>conn</code> is the <code>SSHConnection</code> that we want to configure and use later on. Next, we set it through the class constructor:</p>
+<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">ssh.py: the class constructor</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-60">60</a></span>
+<span class="normal"><a href="#__codelineno-3-61">61</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-60"><a id="__codelineno-3-60" name="__codelineno-3-60"></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">SSHConnection</span><span class="p">):</span>
+</span><span id="__span-3-61"><a id="__codelineno-3-61" name="__codelineno-3-61"></a>        <span class="nb">super</span><span class="p">(</span><span class="n">SshExecuteTool</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">conn</span><span class="o">=</span><span class="n">conn</span><span class="p">)</span>
+</span></code></pre></div></td></tr></table></div>
+<p>We call the superclass constructor and additionally set the <code>conn</code> instance variable.</p>
+<p>Now we can use it within the <code>_run</code> method that will be called when the tool is invoked:</p>
+<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">ssh.py: And the Run Method</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-63">63</a></span>
+<span class="normal"><a href="#__codelineno-4-64">64</a></span>
+<span class="normal"><a href="#__codelineno-4-65">65</a></span>
+<span class="normal"><a href="#__codelineno-4-66">66</a></span>
+<span class="normal"><a href="#__codelineno-4-67">67</a></span>
+<span class="normal"><a href="#__codelineno-4-68">68</a></span>
+<span class="normal"><a href="#__codelineno-4-69">69</a></span>
+<span class="normal"><a href="#__codelineno-4-70">70</a></span>
+<span class="normal"><a href="#__codelineno-4-71">71</a></span>
+<span class="normal"><a href="#__codelineno-4-72">72</a></span>
+<span class="normal"><a href="#__codelineno-4-73">73</a></span>
+<span class="normal"><a href="#__codelineno-4-74">74</a></span>
+<span class="normal"><a href="#__codelineno-4-75">75</a></span>
+<span class="normal"><a href="#__codelineno-4-76">76</a></span>
+<span class="normal"><a href="#__codelineno-4-77">77</a></span>
+<span class="normal"><a href="#__codelineno-4-78">78</a></span>
+<span class="normal"><a href="#__codelineno-4-79">79</a></span>
+<span class="normal"><a href="#__codelineno-4-80">80</a></span>
+<span class="normal"><a href="#__codelineno-4-81">81</a></span>
+<span class="normal"><a href="#__codelineno-4-82">82</a></span>
+<span class="normal"><a href="#__codelineno-4-83">83</a></span>
+<span class="normal"><a href="#__codelineno-4-84">84</a></span>
+<span class="normal"><a href="#__codelineno-4-85">85</a></span>
+<span class="normal"><a href="#__codelineno-4-86">86</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-4-63"><a id="__codelineno-4-63" name="__codelineno-4-63"></a>    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">run_manager</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CallbackManagerForToolRun</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="__span-4-64"><a id="__codelineno-4-64" name="__codelineno-4-64"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Run the command over the (already established) SSH connection.&quot;&quot;&quot;</span>
+</span><span id="__span-4-65"><a id="__codelineno-4-65" name="__codelineno-4-65"></a>
+</span><span id="__span-4-66"><a id="__codelineno-4-66" name="__codelineno-4-66"></a>        <span class="c1"># if we trigger a sudo-prompt, try to fill it with our password</span>
+</span><span id="__span-4-67"><a id="__codelineno-4-67" name="__codelineno-4-67"></a>        <span class="n">sudo_pass</span> <span class="o">=</span> <span class="n">Responder</span><span class="p">(</span>
+</span><span id="__span-4-68"><a id="__codelineno-4-68" name="__codelineno-4-68"></a>            <span class="n">pattern</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\[sudo\] password for &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">username</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span><span class="p">,</span>
+</span><span id="__span-4-69"><a id="__codelineno-4-69" name="__codelineno-4-69"></a>            <span class="n">response</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">password</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="__span-4-70"><a id="__codelineno-4-70" name="__codelineno-4-70"></a>        <span class="p">)</span>
+</span><span id="__span-4-71"><a id="__codelineno-4-71" name="__codelineno-4-71"></a>
+</span><span id="__span-4-72"><a id="__codelineno-4-72" name="__codelineno-4-72"></a>        <span class="n">out</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+</span><span id="__span-4-73"><a id="__codelineno-4-73" name="__codelineno-4-73"></a>        <span class="k">try</span><span class="p">:</span>
+</span><span id="__span-4-74"><a id="__codelineno-4-74" name="__codelineno-4-74"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">pty</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">warn</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">out_stream</span><span class="o">=</span><span class="n">out</span><span class="p">,</span> <span class="n">watchers</span><span class="o">=</span><span class="p">[</span><span class="n">sudo_pass</span><span class="p">],</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</span><span id="__span-4-75"><a id="__codelineno-4-75" name="__codelineno-4-75"></a>        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+</span><span id="__span-4-76"><a id="__codelineno-4-76" name="__codelineno-4-76"></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TIMEOUT! Could we have become root?&quot;</span><span class="p">)</span>
+</span><span id="__span-4-77"><a id="__codelineno-4-77" name="__codelineno-4-77"></a>        <span class="n">out</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-4-78"><a id="__codelineno-4-78" name="__codelineno-4-78"></a>        <span class="n">tmp</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+</span><span id="__span-4-79"><a id="__codelineno-4-79" name="__codelineno-4-79"></a>        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+</span><span id="__span-4-80"><a id="__codelineno-4-80" name="__codelineno-4-80"></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;[sudo] password for &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">username</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span><span class="p">):</span>
+</span><span id="__span-4-81"><a id="__codelineno-4-81" name="__codelineno-4-81"></a>                <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+</span><span id="__span-4-82"><a id="__codelineno-4-82" name="__codelineno-4-82"></a>                <span class="n">tmp</span> <span class="o">=</span> <span class="n">tmp</span> <span class="o">+</span> <span class="n">line</span>
+</span><span id="__span-4-83"><a id="__codelineno-4-83" name="__codelineno-4-83"></a>
+</span><span id="__span-4-84"><a id="__codelineno-4-84" name="__codelineno-4-84"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;cmd executed:&quot;</span><span class="p">,</span> <span class="n">command</span><span class="p">)</span>
+</span><span id="__span-4-85"><a id="__codelineno-4-85" name="__codelineno-4-85"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;result: &quot;</span><span class="p">,</span> <span class="n">tmp</span><span class="p">)</span>
+</span><span id="__span-4-86"><a id="__codelineno-4-86" name="__codelineno-4-86"></a>        <span class="k">return</span> <span class="n">tmp</span>
+</span></code></pre></div></td></tr></table></div>
+<p>Again, please ignore the ugly SSH implementation code but note that we jsut return the result on line 86 as string.</p>
+<p>Next step is wiring everything up within our prototype code.</p>
+<h2 id="improving-the-configuration-handling">Improving the Configuration Handling</h2>
+<p>We now have a tool that's configurable whileall needed configuration is in the <code>.env</code> file. Let's connect them! First, we introduce a simple helper function that receives an environmental variable or throws an error otherwise:</p>
+<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">initial_version.py: environment variable helper</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-16">16</a></span>
+<span class="normal"><a href="#__codelineno-5-17">17</a></span>
+<span class="normal"><a href="#__codelineno-5-18">18</a></span>
+<span class="normal"><a href="#__codelineno-5-19">19</a></span>
+<span class="normal"><a href="#__codelineno-5-20">20</a></span>
+<span class="normal"><a href="#__codelineno-5-21">21</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16"></a><span class="k">def</span> <span class="nf">get_or_fail</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Get an environment variable or raise an error if it&#39;s not set.&quot;&quot;&quot;</span>
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18"></a>    <span class="n">value</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19"></a>    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Environment variable </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> not set&quot;</span><span class="p">)</span>
+</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21"></a>    <span class="k">return</span> <span class="n">value</span>
+</span></code></pre></div></td></tr></table></div>
+<p>Now we can use <code>load_dotenv()</code> to load the variables set within <code>.env</code> into our environment and us the helper to retrieve all the needed SSH parameters. With this data we can finally create our <code>SSHConnection</code>. We extracted this into a separate method for readability:</p>
+<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">ssh.py: create a new SSH connection</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-123">123</a></span>
+<span class="normal"><a href="#__codelineno-6-124">124</a></span>
+<span class="normal"><a href="#__codelineno-6-125">125</a></span>
+<span class="normal"><a href="#__codelineno-6-126">126</a></span>
+<span class="normal"><a href="#__codelineno-6-127">127</a></span>
+<span class="normal"><a href="#__codelineno-6-128">128</a></span>
+<span class="normal"><a href="#__codelineno-6-129">129</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-123"><a id="__codelineno-6-123" name="__codelineno-6-123"></a><span class="k">def</span> <span class="nf">get_ssh_connection_from_env</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">SSHConnection</span><span class="p">:</span>
+</span><span id="__span-6-124"><a id="__codelineno-6-124" name="__codelineno-6-124"></a>    <span class="n">host</span> <span class="o">=</span> <span class="n">get_or_fail</span><span class="p">(</span><span class="s2">&quot;TARGET_HOST&quot;</span><span class="p">)</span>
+</span><span id="__span-6-125"><a id="__codelineno-6-125" name="__codelineno-6-125"></a>    <span class="n">hostname</span> <span class="o">=</span> <span class="n">get_or_fail</span><span class="p">(</span><span class="s2">&quot;TARGET_HOSTNAME&quot;</span><span class="p">)</span>
+</span><span id="__span-6-126"><a id="__codelineno-6-126" name="__codelineno-6-126"></a>    <span class="n">username</span> <span class="o">=</span> <span class="n">get_or_fail</span><span class="p">(</span><span class="s2">&quot;TARGET_USERNAME&quot;</span><span class="p">)</span>
+</span><span id="__span-6-127"><a id="__codelineno-6-127" name="__codelineno-6-127"></a>    <span class="n">password</span> <span class="o">=</span> <span class="n">get_or_fail</span><span class="p">(</span><span class="s2">&quot;TARGET_PASSWORD&quot;</span><span class="p">)</span>
+</span><span id="__span-6-128"><a id="__codelineno-6-128" name="__codelineno-6-128"></a>
+</span><span id="__span-6-129"><a id="__codelineno-6-129" name="__codelineno-6-129"></a>    <span class="k">return</span> <span class="n">SSHConnection</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">hostname</span><span class="o">=</span><span class="n">hostname</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
+</span></code></pre></div></td></tr></table></div>
+<p>Finally, we can wire everything up within our <a href="https://github.com/andreashappe/offensive-langgraph/blob/26c02488e7da504cade55fda0094225bac055f01/src/initial_version.py">prototype</a>:</p>
+<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">initial_version.py: retrieving configuration data</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-24">24</a></span>
+<span class="normal"><a href="#__codelineno-7-25">25</a></span>
+<span class="normal"><a href="#__codelineno-7-26">26</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-24"><a id="__codelineno-7-24" name="__codelineno-7-24"></a><span class="n">load_dotenv</span><span class="p">()</span>
+</span><span id="__span-7-25"><a id="__codelineno-7-25" name="__codelineno-7-25"></a><span class="n">conn</span> <span class="o">=</span> <span class="n">get_ssh_connection_from_env</span><span class="p">()</span>
+</span><span id="__span-7-26"><a id="__codelineno-7-26" name="__codelineno-7-26"></a><span class="n">get_or_fail</span><span class="p">(</span><span class="s2">&quot;OPENAI_API_KEY&quot;</span><span class="p">)</span> <span class="c1"># langgraph will use this env variable itself</span>
+</span></code></pre></div></td></tr></table></div>
+<p>Note that we now have a configured SSH connection within <code>conn</code>. When creating the tools for our LLMs, instead of passing the functions (as we did with <code>@tool</code>), we now pass in the instanciated tool-classes which receive the configured SSH connection through their constructor parameters (line 33, we also added a second tool <code>SSHTestCredentialsTool</code> for credential checking):</p>
+<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">initial_version.py: Getting all configuration from the env</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-32">32</a></span>
+<span class="normal"><a href="#__codelineno-8-33">33</a></span>
+<span class="normal"><a href="#__codelineno-8-34">34</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-8-32"><a id="__codelineno-8-32" name="__codelineno-8-32"></a><span class="n">llm</span> <span class="o">=</span> <span class="n">ChatOpenAI</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-4o&quot;</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-8-33"><a id="__codelineno-8-33" name="__codelineno-8-33"></a><span class="n">tools</span> <span class="o">=</span> <span class="p">[</span><span class="n">SshExecuteTool</span><span class="p">(</span><span class="n">conn</span><span class="p">),</span> <span class="n">SshTestCredentialsTool</span><span class="p">(</span><span class="n">conn</span><span class="p">)]</span>
+</span><span id="__span-8-34"><a id="__codelineno-8-34" name="__codelineno-8-34"></a><span class="n">llm_with_tools</span> <span class="o">=</span> <span class="n">llm</span><span class="o">.</span><span class="n">bind_tools</span><span class="p">(</span><span class="n">tools</span><span class="p">)</span>
+</span></code></pre></div></td></tr></table></div>
+<p>We can also use this when configuring our initial user question template:</p>
+<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">initial_version.py: using the configuration for templating</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-76">76</a></span>
+<span class="normal"><a href="#__codelineno-9-77">77</a></span>
+<span class="normal"><a href="#__codelineno-9-78">78</a></span>
+<span class="normal"><a href="#__codelineno-9-79">79</a></span>
+<span class="normal"><a href="#__codelineno-9-80">80</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-9-76"><a id="__codelineno-9-76" name="__codelineno-9-76"></a><span class="n">template</span> <span class="o">=</span> <span class="n">Template</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+</span><span id="__span-9-77"><a id="__codelineno-9-77" name="__codelineno-9-77"></a><span class="s2">You are a low-privilege user $</span><span class="si">{username}</span><span class="s2"> with password $</span><span class="si">{password}</span><span class="s2"> on a linux system and your goal is to become the root user by executing commands on the remote system.</span>
+</span><span id="__span-9-78"><a id="__codelineno-9-78" name="__codelineno-9-78"></a>
+</span><span id="__span-9-79"><a id="__codelineno-9-79" name="__codelineno-9-79"></a><span class="s2">Do not repeat already tried escalation attacks. You should focus upon enumeration and privilege escalation. If you were able to become root, describe the used method as final message.</span>
+</span><span id="__span-9-80"><a id="__codelineno-9-80" name="__codelineno-9-80"></a><span class="s2">&quot;&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
+</span></code></pre></div></td></tr></table></div>
+<p>And that's it.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+  
+
+
+
+      
+    </article>
+  </div>
+
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["search.suggest", "search.highlight", "content.code.annotation", "content.code.copy"], "search": "../../../../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../../../assets/javascripts/bundle.525ec568.min.js"></script>
+      
+    
+  </body>
+</html>
