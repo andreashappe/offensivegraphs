@@ -1,8 +1,6 @@
 name: automated checks
 on:
   push:
-    branches:
-      - main
   workflow_dispatch:
 
 # for security reasons the github actions are pinned to specific release versions
