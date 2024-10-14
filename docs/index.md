@@ -28,9 +28,9 @@ We see this as a benefit, we learn using LLMs and offensive security.
 
 | Example | Domain | Summary | Further Documentation |
 | -- | -- | -- | -- |
-| initial example | linux priv-esc | good first example | [initial post](blog/2024/10/10/first-steps-and-initial-version/#the-first-prototype), [tools and configuration](blog/2024/10/11/improving-configuration-handling-esp-for-tools/) |
-| react agent | linux priv-esc | use langgraph to reduce code | [Using `create_react_agent`](blog/2024/10/12/simplify-our-tool-calling-agent-through-create_react_agent/) |
-| plan-and-execute | linux priv-esc | multi-layer planing | [Adding Plan-and-Execute Planner](blog/2024/10/14/adding-plan-and-execute-planner/) |
+| initial example | linux priv-esc | good first example | [initial post](blog/2024/10/10/first-steps-and-initial-version/#the-first-prototype.md), [tools and configuration](blog/2024/10/11/improving-configuration-handling-esp-for-tools.md) |
+| react agent | linux priv-esc | use langgraph to reduce code | [Using `create_react_agent`](blog/2024/10/12/simplify-our-tool-calling-agent-through-create_react_agent.md) |
+| plan-and-execute | linux priv-esc | multi-layer planing | [Adding Plan-and-Execute Planner](blog/2024/10/14/adding-plan-and-execute-planner.md) |
 
 ## How did we get there?
 
