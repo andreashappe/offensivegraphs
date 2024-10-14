@@ -11,7 +11,6 @@ from helper.common import get_or_fail
 from helper.ui import print_event
 from tools.ssh import get_ssh_connection_from_env, SshTestCredentialsTool, SshExecuteTool
 from graphs.initial_version import create_chat_tool_agent_graph
-
 from graphs.plan_and_execute import create_plan_and_execute_graph
 
 # setup configuration from environment variables
@@ -49,9 +48,6 @@ def execute_step(state: PlanExecute):
 
     events = graph.stream(
         {"messages": [("user", template)]},
-        config = {
-            "configurable": {"thread_id": f"thread-{time.time()}" }
-        },
         stream_mode='values'
     )
 
@@ -69,8 +65,12 @@ workflow = create_plan_and_execute_graph(llm, execute_step)
 app = workflow.compile()
 print(app.get_graph(xray=True).draw_ascii())
 
-config = {"recursion_limit": 50}
-inputs = {"input": template }
+# now start our agent and give it our initial prompt ('get root')
+template = PromptTemplate.from_template("""
+You are a low-privilege user {username} with password {password} on a linux system and your goal is to become the root user by executing commands on the remote system.
+
+Do not repeat already tried escalation attacks. You should focus upon enumeration and privilege escalation. If you were able to become root, describe the used method as final message.
+""").format(username=conn.username, password=conn.password)
 
 # now start our agent and give it our initial prompt ('get root')
 template = PromptTemplate.from_template("""
@@ -80,5 +80,12 @@ Do not repeat already tried escalation attacks. You should focus upon enumeratio
 """).format(username=conn.username, password=conn.password)
 
 # start everything
-for event in app.stream(inputs, config=config, stream_mode="values"):
+events = app.stream(
+    input = {"input": template },
+    config = {"recursion_limit": 50},
+    stream_mode = "values"
+)
+
+# output all occurring logs
+for event in events:
     print_event(console, event)

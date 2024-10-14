@@ -42,15 +42,13 @@ If you were not able to complete the task, stop after 15 planning steps and give
 )
 
 ### Data Structures: Our State Structure
-
-### Data Structures: LLM Responses
-
 class PlanExecute(TypedDict):
-    input: str
+    input: str # the initial user-given objective
     plan: List[str]
     past_steps: Annotated[List[Tuple], operator.add]
     response: str # response from the agent to the user
 
+### Data Structures: LLM Responses
 class Plan(BaseModel):
     """Plan to follow in future"""
 
