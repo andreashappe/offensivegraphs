@@ -1,4 +1,6 @@
-site_name: Offensive Langgraph Playground
+site_name: Offensive Graphs Playground
+site_url: https://offensivegraphs.ai
+repo_url: https://github.com/andreashappe/offensivegraphs
 theme:
   name: material
   features:
@@ -21,9 +23,6 @@ theme:
       primary: teal   
 plugins:
   - blog
-
-
-
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
