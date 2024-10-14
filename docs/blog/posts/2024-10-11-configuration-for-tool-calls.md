@@ -123,7 +123,7 @@ def get_ssh_connection_from_env() -> SSHConnection:
     return SSHConnection(host=host, hostname=hostname, username=username, password=password)
 ```
 
-Finally, we can wire everything up within our [prototype](https://github.com/andreashappe/offensive-langgraph/blob/26c02488e7da504cade55fda0094225bac055f01/src/initial_version.py):
+Finally, we can wire everything up within our [prototype](https://github.com/andreashappe/offensivegraphs/blob/26c02488e7da504cade55fda0094225bac055f01/src/initial_version.py):
 
 ```python title="initial_version.py: retrieving configuration data" linenums="24"
 load_dotenv()
