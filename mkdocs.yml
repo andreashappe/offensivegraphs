@@ -4,10 +4,16 @@ repo_url: https://github.com/andreashappe/offensivegraphs
 theme:
   name: material
   features:
-    - search.suggest
-    - search.highlight
     - content.code.annotation
     - content.code.copy
+    - navigation.expand
+    - navigation.instant.preview
+    - navigation.path
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.suggest
+    - toc.follow
   language: en
   palette:
     - scheme: default
