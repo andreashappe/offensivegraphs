@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.40">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.41">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.8c3ca2c6.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.0253249f.min.css">
       
         
         <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.06af60db.min.css">
@@ -317,7 +317,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
         
           
           <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
@@ -383,7 +385,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3" >
         
           
           <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
@@ -605,9 +609,9 @@
 
 <h1 id="simplify-our-tool-calling-agent-through-create_react_agent">Simplify our Tool-Calling Agent through <code>create_react_agent</code></h1>
 <p>LangGraph has some amazing <a href="https://langchain-ai.github.io/langgraph/reference/prebuilt/">Prebuilt Components</a>, one of them is the <a href="https://langchain-ai.github.io/langgraph/reference/prebuilt/#langgraph.prebuilt.chat_agent_executor.create_react_agent"><code>create_react_agent</code> function</a> that allows you to hughely simplify creating new tool-using agents.</p>
-<p>The full source code can be found <a href="https://github.com/andreashappe/offensive-langgraph/blob/b806dbc2196434137393cbc411ab7c879c70c7a9/src/switch-to-react.py">within our github history</a>.</p>
+<p>The full source code can be found <a href="https://github.com/andreashappe/offensivegraphs/blob/b806dbc2196434137393cbc411ab7c879c70c7a9/src/switch-to-react.py">within our github history</a>.</p>
 <h2 id="the-simplified-version">The simplified version</h2>
-<p>This willb e based upon our <a href="">recent configuration-improved version</a>. Similar to that version, we start by reading the configuration data, setting up our LLM, connecting to the target system via SSH, and configuring tools for usage through LLMs:</p>
+<p>This willb e based upon our <a href="../../11/improving-configuration-handling-esp-for-tools/">recent configuration-improved version</a>. Similar to that version, we start by reading the configuration data, setting up our LLM, connecting to the target system via SSH, and configuring tools for usage through LLMs:</p>
 <div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Initial Configuration</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-10">10</a></span>
 <span class="normal"><a href="#__codelineno-0-11">11</a></span>
 <span class="normal"><a href="#__codelineno-0-12">12</a></span>
@@ -633,8 +637,8 @@
 <p>Now we can use the <code>create_react_agent</code> method to create a new agent graph based upon our configured LLM and the known tools:</p>
 <div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Using create_react_agent</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-23">23</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23"></a><span class="n">agent_executor</span> <span class="o">=</span> <span class="n">create_react_agent</span><span class="p">(</span><span class="n">llm</span><span class="p">,</span> <span class="n">tools</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
-<p>All that's left is to create the initial message (as detailed in our <a href="">initial blog post</a>) and start the agent by calling <code>stream</code> on it while passing the mentioned initial message.</p>
-<p>Again we are using <code>events</code> to output all tool calls and decisions that our agent is making. </p>
+<p>All that's left is to create the initial message (as detailed in our <a href="../../10/first-steps-and-initial-version/">initial blog post</a>) and start the agent by calling <code>stream</code> on it while passing the mentioned initial message.</p>
+<p>Again we are using <code>events</code> to output all tool calls and decisions that our agent is making.</p>
 <div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Starting the agent and output it's messages</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-26">26</a></span>
 <span class="normal"><a href="#__codelineno-2-27">27</a></span>
 <span class="normal"><a href="#__codelineno-2-28">28</a></span>
@@ -674,7 +678,7 @@
 </span><span id="__span-2-44"><a id="__codelineno-2-44" name="__codelineno-2-44"></a>        <span class="n">event</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">pretty_print</span><span class="p">()</span>
 </span></code></pre></div></td></tr></table></div>
 <p>And that's it! Pretty amazing, when you think about it.</p>
-<p>The <code>node</code>/<code>edge</code> graph is exactly the same as in <a href="">our initial hand-written version</a>.</p>
+<p>The <code>node</code>/<code>edge</code> graph is exactly the same as in <a href="../../10/first-steps-and-initial-version/">our initial hand-written version</a>.</p>
 
 
 
@@ -702,6 +706,12 @@
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
       </main>
       
         <footer class="md-footer">
@@ -728,10 +738,10 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["search.suggest", "search.highlight", "content.code.annotation", "content.code.copy"], "search": "../../../../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["content.code.annotation", "content.code.copy", "navigation.expand", "navigation.instant.preview", "navigation.path", "navigation.top", "navigation.tracking", "search.highlight", "search.suggest", "toc.follow"], "search": "../../../../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.525ec568.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.83f73b43.min.js"></script>
       
     
   </body>

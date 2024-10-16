@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.40">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.41">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.8c3ca2c6.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.0253249f.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
@@ -325,7 +325,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
         
           
           <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
@@ -391,7 +393,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3" >
         
           
           <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
@@ -542,7 +546,7 @@
   </header>
   <div class="md-post__content md-typeset">
     <h2 id="adding-plan-and-execute-planner"><a class="toclink" href="2024/10/14/adding-plan-and-execute-planner/">Adding Plan-and-Execute Planner</a></h2>
-<p>All sources can be found in <a href="https://github.com/andreashappe/offensive-langgraph/tree/dbe5ae76d044e6dc876dcb86029f853a30bac565">our github history</a>.</p>
+<p>All sources can be found in <a href="https://github.com/andreashappe/offensivegraphs/tree/dbe5ae76d044e6dc876dcb86029f853a30bac565">our github history</a>.</p>
 <p>When using LLMs for complex tasks like hacking, a common problem is that they become hyper-focused upon a single attack vector and ignore all others. They go down a "depth-first" rabbit hole and never leave it. This was experienced by <a href="https://arxiv.org/abs/2310.11409">me</a> and <a href="https://arxiv.org/abs/2308.06782">others</a>.</p>
 <h3 id="plan-and-execute-pattern"><a class="toclink" href="2024/10/14/adding-plan-and-execute-planner/#plan-and-execute-pattern">Plan-and-Execute Pattern</a></h3>
 <p>One potential solution is the <a href="https://arxiv.org/abs/2305.04091">'plan-and-solve'-pattern</a> (often also named <a href="https://langchain-ai.github.io/langgraph/tutorials/plan-and-execute/plan-and-execute/">'plan-and-execute'-pattern</a>). in this strategy, one LLM (the <code>planner</code>) is given the task of creating a high-level task plan based upon the user-given objective. The task plan is processed by another LLM module (the <code>agent</code> or <code>executor</code>). Basically, the next step from the task plan is taken and forwarded to the executer to solve within in a limited number of steps or time.</p>
@@ -822,7 +826,7 @@
 </span><span id="__span-6-60"><a id="__codelineno-6-60" name="__codelineno-6-60"></a>        <span class="s2">&quot;past_steps&quot;</span><span class="p">:</span> <span class="p">[(</span><span class="n">task</span><span class="p">,</span> <span class="n">agent_response</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">content</span><span class="p">)],</span>
 </span><span id="__span-6-61"><a id="__codelineno-6-61" name="__codelineno-6-61"></a>    <span class="p">}</span>
 </span></code></pre></div></td></tr></table></div>
-<p>We are reusing our <a href="">initial simple agent</a> as executor on line 46. On lines 29-31 we are creating a new connection to OpenAI and configure some SSH-based tools (as mentioned in the original post) for our executor agent. This fully separated the LLM connection, graph history and supported tools from the LLM-configuration used by the plan-and-execute graph and would allow for using different LLMs for the <code>planner</code> and <code>executor</code> respectively.</p>
+<p>We are reusing our <a href="2024/10/10/first-steps-and-initial-version/">initial simple agent</a> as executor on line 46. On lines 29-31 we are creating a new connection to OpenAI and configure some SSH-based tools (as mentioned in the original post) for our executor agent. This fully separated the LLM connection, graph history and supported tools from the LLM-configuration used by the plan-and-execute graph and would allow for using different LLMs for the <code>planner</code> and <code>executor</code> respectively.</p>
 <p>Starting on line 49 , we execute our sub-agent and output its steps before returning the final step on line 59 as <code>past_steps</code>. This will append our agent's output (which includes a generated summary of its results) to <code>past_steps</code> within our shared state (which will subsequently be used by the <code>replanner</code> agent to refine future planning steps).</p>
 <h3 id="wiring-it-up-and-starting-it"><a class="toclink" href="2024/10/14/adding-plan-and-execute-planner/#wiring-it-up-and-starting-it">Wiring it up and starting it</a></h3>
 <p>The only thins left is to wire up everything, provide the initial template and output the occurring events (to see what our LLM agent is doing):</p>
@@ -911,9 +915,9 @@
   <div class="md-post__content md-typeset">
     <h2 id="simplify-our-tool-calling-agent-through-create_react_agent"><a class="toclink" href="2024/10/12/simplify-our-tool-calling-agent-through-create_react_agent/">Simplify our Tool-Calling Agent through <code>create_react_agent</code></a></h2>
 <p>LangGraph has some amazing <a href="https://langchain-ai.github.io/langgraph/reference/prebuilt/">Prebuilt Components</a>, one of them is the <a href="https://langchain-ai.github.io/langgraph/reference/prebuilt/#langgraph.prebuilt.chat_agent_executor.create_react_agent"><code>create_react_agent</code> function</a> that allows you to hughely simplify creating new tool-using agents.</p>
-<p>The full source code can be found <a href="https://github.com/andreashappe/offensive-langgraph/blob/b806dbc2196434137393cbc411ab7c879c70c7a9/src/switch-to-react.py">within our github history</a>.</p>
+<p>The full source code can be found <a href="https://github.com/andreashappe/offensivegraphs/blob/b806dbc2196434137393cbc411ab7c879c70c7a9/src/switch-to-react.py">within our github history</a>.</p>
 <h3 id="the-simplified-version"><a class="toclink" href="2024/10/12/simplify-our-tool-calling-agent-through-create_react_agent/#the-simplified-version">The simplified version</a></h3>
-<p>This willb e based upon our <a href="">recent configuration-improved version</a>. Similar to that version, we start by reading the configuration data, setting up our LLM, connecting to the target system via SSH, and configuring tools for usage through LLMs:</p>
+<p>This willb e based upon our <a href="2024/10/11/improving-configuration-handling-esp-for-tools/">recent configuration-improved version</a>. Similar to that version, we start by reading the configuration data, setting up our LLM, connecting to the target system via SSH, and configuring tools for usage through LLMs:</p>
 <div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Initial Configuration</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-10">10</a></span>
 <span class="normal"><a href="#__codelineno-0-11">11</a></span>
 <span class="normal"><a href="#__codelineno-0-12">12</a></span>
@@ -939,8 +943,8 @@
 <p>Now we can use the <code>create_react_agent</code> method to create a new agent graph based upon our configured LLM and the known tools:</p>
 <div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Using create_react_agent</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-23">23</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23"></a><span class="n">agent_executor</span> <span class="o">=</span> <span class="n">create_react_agent</span><span class="p">(</span><span class="n">llm</span><span class="p">,</span> <span class="n">tools</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
-<p>All that's left is to create the initial message (as detailed in our <a href="">initial blog post</a>) and start the agent by calling <code>stream</code> on it while passing the mentioned initial message.</p>
-<p>Again we are using <code>events</code> to output all tool calls and decisions that our agent is making. </p>
+<p>All that's left is to create the initial message (as detailed in our <a href="2024/10/10/first-steps-and-initial-version/">initial blog post</a>) and start the agent by calling <code>stream</code> on it while passing the mentioned initial message.</p>
+<p>Again we are using <code>events</code> to output all tool calls and decisions that our agent is making.</p>
 <div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Starting the agent and output it's messages</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-26">26</a></span>
 <span class="normal"><a href="#__codelineno-2-27">27</a></span>
 <span class="normal"><a href="#__codelineno-2-28">28</a></span>
@@ -980,7 +984,7 @@
 </span><span id="__span-2-44"><a id="__codelineno-2-44" name="__codelineno-2-44"></a>        <span class="n">event</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">pretty_print</span><span class="p">()</span>
 </span></code></pre></div></td></tr></table></div>
 <p>And that's it! Pretty amazing, when you think about it.</p>
-<p>The <code>node</code>/<code>edge</code> graph is exactly the same as in <a href="">our initial hand-written version</a>.</p>
+<p>The <code>node</code>/<code>edge</code> graph is exactly the same as in <a href="2024/10/10/first-steps-and-initial-version/">our initial hand-written version</a>.</p>
     
   </div>
 </article>
@@ -1020,7 +1024,7 @@
   </header>
   <div class="md-post__content md-typeset">
     <h2 id="improving-configuration-handling-esp-for-tools"><a class="toclink" href="2024/10/11/improving-configuration-handling-esp-for-tools/">Improving Configuration Handling, esp. for Tools</a></h2>
-<p>While being quite happy that the <a href="">initial prototype</a> worked within hours, its code was very prototype-y, i.e., much of its configuration was hard-coded. In a second step, we want to fix this by making our target information (the SSH connection) configurable and remvoe all hard-coded credentials from the code.</p>
+<p>While being quite happy that the <a href="2024/10/10/first-steps-and-initial-version/">initial prototype</a> worked within hours, its code was very prototype-y, i.e., much of its configuration was hard-coded. In a second step, we want to fix this by making our target information (the SSH connection) configurable and remove all hard-coded credentials from the code.</p>
 <h3 id="big-picture"><a class="toclink" href="2024/10/11/improving-configuration-handling-esp-for-tools/#big-picture">Big Picture</a></h3>
 <p>We are already using <a href="https://pypi.org/project/python-dotenv/">python-dotenv</a> for some of our configuration so it makes sense to further utilize this for more configuration data. In the improved implementation, our <code>.env</code> will look like this:</p>
 <div class="language-ini highlight"><span class="filename">.env: Example configuration</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="na">OPENAI_API_KEY</span><span class="o">=</span><span class="s">&#39;secret openai API key&#39;</span>
@@ -1032,10 +1036,10 @@
 </span></code></pre></div>
 <p>The prototype will read this for configuration data. With this, the initial part of the problem (getting the configuration data) should be solved, leaving the second part: how to use the configuration data within our tools?</p>
 <p>After looking into the <a href="https://api.python.langchain.com/en/latest/tools/langchain_core.tools.tool.html">@tool annotation</a> for functions, this did not look like the perfect approach. Instead we opted towards subclassing <a href="https://api.python.langchain.com/en/latest/core/tools/langchain_core.tools.base.BaseTool.html">BaseTool</a>. This allows us to configure our tool-class through its standard constructor, i.e., pass the <code>SSHConnection</code> into it, and then use the connection when the tool sis called by the LLM through its <code>_run()</code> method.</p>
-<p>You can find the resulting source code in <a href="https://github.com/andreashappe/offensive-langgraph/tree/26c02488e7da504cade55fda0094225bac055f01">this github version</a>. Please note, that I had a bug initially (<a href="https://github.com/andreashappe/offensive-langgraph/commit/576105f2a358c7aa6877d3bcf0395a5ec2997e7f">fixed here</a>). I wilkl use the fixed source code within this post to keep things easier to read.</p>
+<p>You can find the resulting source code in <a href="https://github.com/andreashappe/offensivegraphs/tree/26c02488e7da504cade55fda0094225bac055f01">this github version</a>. Please note, that I had a bug initially (<a href="https://github.com/andreashappe/offensivegraphs/commit/576105f2a358c7aa6877d3bcf0395a5ec2997e7f">fixed here</a>). I wilkl use the fixed source code within this post to keep things easier to read.</p>
 <p>Let's start with our updated tool that will be configurable:</p>
 <h3 id="making-our-tool-configurable-by-switching-to-basetool"><a class="toclink" href="2024/10/11/improving-configuration-handling-esp-for-tools/#making-our-tool-configurable-by-switching-to-basetool">Making our Tool configurable by switching to <code>BaseTool</code></a></h3>
-<p>You can find the full source code at <a href="https://github.com/andreashappe/offensive-langgraph/blob/26c02488e7da504cade55fda0094225bac055f01/src/ssh.py">within github</a>. This change was pretty straight-forward.</p>
+<p>You can find the full source code at <a href="https://github.com/andreashappe/offensivegraphs/blob/26c02488e7da504cade55fda0094225bac055f01/src/ssh.py">within github</a>. This change was pretty straight-forward.</p>
 <p>Instead of writing a function, we now create a class for each tool. We have to subclass <a href="https://api.python.langchain.com/en/latest/tools/langchain_core.tools.BaseTool.html">BaseTool</a>, the parameters for our tool are now defined in a separate class which is a subclass of <code>BaseModel</code>:</p>
 <div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">ssh.py: switching to BaseModel</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-48">48</a></span>
 <span class="normal"><a href="#__codelineno-1-49">49</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-48"><a id="__codelineno-1-48" name="__codelineno-1-48"></a><span class="k">class</span> <span class="nc">SshExecuteInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
@@ -1117,7 +1121,7 @@
 <p>Again, please ignore the ugly SSH implementation code but note that we jsut return the result on line 86 as string.</p>
 <p>Next step is wiring everything up within our prototype code.</p>
 <h3 id="improving-the-configuration-handling"><a class="toclink" href="2024/10/11/improving-configuration-handling-esp-for-tools/#improving-the-configuration-handling">Improving the Configuration Handling</a></h3>
-<p>We now have a tool that's configurable whileall needed configuration is in the <code>.env</code> file. Let's connect them! First, we introduce a simple helper function that receives an environmental variable or throws an error otherwise:</p>
+<p>We now have a tool that's configurable while all needed configuration is in the <code>.env</code> file. Let's connect them! First, we introduce a simple helper function that receives an environmental variable or throws an error otherwise:</p>
 <div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">initial_version.py: environment variable helper</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-16">16</a></span>
 <span class="normal"><a href="#__codelineno-5-17">17</a></span>
 <span class="normal"><a href="#__codelineno-5-18">18</a></span>
@@ -1145,14 +1149,14 @@
 </span><span id="__span-6-128"><a id="__codelineno-6-128" name="__codelineno-6-128"></a>
 </span><span id="__span-6-129"><a id="__codelineno-6-129" name="__codelineno-6-129"></a>    <span class="k">return</span> <span class="n">SSHConnection</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">hostname</span><span class="o">=</span><span class="n">hostname</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
-<p>Finally, we can wire everything up within our <a href="https://github.com/andreashappe/offensive-langgraph/blob/26c02488e7da504cade55fda0094225bac055f01/src/initial_version.py">prototype</a>:</p>
+<p>Finally, we can wire everything up within our <a href="https://github.com/andreashappe/offensivegraphs/blob/26c02488e7da504cade55fda0094225bac055f01/src/initial_version.py">prototype</a>:</p>
 <div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">initial_version.py: retrieving configuration data</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-24">24</a></span>
 <span class="normal"><a href="#__codelineno-7-25">25</a></span>
 <span class="normal"><a href="#__codelineno-7-26">26</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-24"><a id="__codelineno-7-24" name="__codelineno-7-24"></a><span class="n">load_dotenv</span><span class="p">()</span>
 </span><span id="__span-7-25"><a id="__codelineno-7-25" name="__codelineno-7-25"></a><span class="n">conn</span> <span class="o">=</span> <span class="n">get_ssh_connection_from_env</span><span class="p">()</span>
 </span><span id="__span-7-26"><a id="__codelineno-7-26" name="__codelineno-7-26"></a><span class="n">get_or_fail</span><span class="p">(</span><span class="s2">&quot;OPENAI_API_KEY&quot;</span><span class="p">)</span> <span class="c1"># langgraph will use this env variable itself</span>
 </span></code></pre></div></td></tr></table></div>
-<p>Note that we now have a configured SSH connection within <code>conn</code>. When creating the tools for our LLMs, instead of passing the functions (as we did with <code>@tool</code>), we now pass in the instanciated tool-classes which receive the configured SSH connection through their constructor parameters (line 33, we also added a second tool <code>SSHTestCredentialsTool</code> for credential checking):</p>
+<p>Note that we now have a configured SSH connection within <code>conn</code>. When creating the tools for our LLMs, instead of passing the functions (as we did with <code>@tool</code>), we now pass in the instantiated tool-classes which receive the configured SSH connection through their constructor parameters (line 33, we also added a second tool <code>SSHTestCredentialsTool</code> for credential checking):</p>
 <div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">initial_version.py: Getting all configuration from the env</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-32">32</a></span>
 <span class="normal"><a href="#__codelineno-8-33">33</a></span>
 <span class="normal"><a href="#__codelineno-8-34">34</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-8-32"><a id="__codelineno-8-32" name="__codelineno-8-32"></a><span class="n">llm</span> <span class="o">=</span> <span class="n">ChatOpenAI</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-4o&quot;</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -1210,7 +1214,7 @@
   </header>
   <div class="md-post__content md-typeset">
     <h2 id="first-steps-and-initial-version"><a class="toclink" href="2024/10/10/first-steps-and-initial-version/">First Steps and Initial Version</a></h2>
-<p>This started when <a href="">Jürgen</a> contacted <a href="">Andreas</a> as he needed an automated attacker emulation for one of his defensive projects. Andreas wrote the initial version of <a href="https://hackingbuddy.ai">hackingBuddyGPT</a> in March 2023 (roughly 18 months ago) and much of the codebase was written for older, less-sophisticated, LLMs. Juergen had experience with <a href="https://www.langchain.com/langgraph">LangGraph</a>, so we decided to play around with using langgraph for offensive security.</p>
+<p>This started when <a href="https://github.com/brandl">Jürgen</a> contacted <a href="https://github.com/andreashappe">Andreas</a> as he needed an automated attacker emulation for one of his defensive projects. Andreas wrote the initial version of <a href="https://hackingbuddy.ai">hackingBuddyGPT</a> in March 2023 (roughly 18 months ago) and much of the codebase was written for older, less-sophisticated, LLMs. Juergen had experience with <a href="https://www.langchain.com/langgraph">LangGraph</a>, so we decided to play around with using langgraph for offensive security.</p>
 <h3 id="scencario-and-starting-situation"><a class="toclink" href="2024/10/10/first-steps-and-initial-version/#scencario-and-starting-situation">Scencario and Starting Situation</a></h3>
 <p>As an initial example we have chosen Linux Privilege Escalation: in these scenarios, you already have access to a linux system (typically over SSH) as a low-privilege user and want to become the all powerful root user.</p>
 <p>As a starting point, we were using both <a href="https://langchain-ai.github.io/langgraph/tutorials/introduction/">langgaph's quickstart tutorial</a> for rough guidance, as well as Andreas' original SSH connector to connect to a vulnerable virtual machine provided by <a href="https://github.com/ipa-lab/benchmark-privesc-linux">ipa-lab/benchmark-privesc-linux</a> (also originally written by Andreas).</p>
@@ -1224,7 +1228,7 @@
 <p>So as a starting point we want to replicate the functonality of <a href="https://hackingbuddy.ai">hackingBuddyGPT</a> in the most simple and abstract way. Think of it like this:</p>
 <p><img alt="Concept" src="initial_version_conceptual.drawio.png" /></p>
 <p>You have a vulnerable VM that allows for the execution of arbitrary commands via SSH. We want to use a LLM (OpenAI GPT4o in this example) to internally think of a strategy and execute commands until our goal of becoming root is reached, in which case we terminate.</p>
-<p>This prototype source code can be found <a href="https://github.com/andreashappe/offensive-langraph/tree/64ae8a080c5aa5e7255e1cb00c8ddb5adc6d1a20">in the github history</a>. If you look into the current <code>main</code> branch, the current source code will look differently.</p>
+<p>This prototype source code can be found <a href="https://github.com/andreashappe/offensivegraphs/tree/64ae8a080c5aa5e7255e1cb00c8ddb5adc6d1a20">in the github history</a>. If you look into the current <code>main</code> branch, the current source code will look differently.</p>
 <p>We split the functionality into two files: <code>ssh.py</code> for all the SSH callouts performed by the prototype, and <code>initial_version.py</code> containg the actual prototype logic.</p>
 <h4 id="tool-calling-enable-ssh-command-execution"><a class="toclink" href="2024/10/10/first-steps-and-initial-version/#tool-calling-enable-ssh-command-execution">Tool-Calling: enable SSH command execution</a></h4>
 <p>Tools allow LLMs to access external operations. In our case, we want LLMs to execute commands over SSH on a remote host. Let's go through parts of the code in <code>ssh.py</code>:</p>
@@ -1427,9 +1431,9 @@
 <h4 id="the-graph-in-its-full-glory"><a class="toclink" href="2024/10/10/first-steps-and-initial-version/#the-graph-in-its-full-glory">The graph in it's full glory</a></h4>
 <p>You can use <code>graph.get_graph().draw_mermaid()</code> to get a mermaid diagram with our graph:</p>
 <p><img alt="Our Graph in its full Glory" src="initial_prototype.svg" /></p>
-<h3 id="execute-it"><a class="toclink" href="2024/10/10/first-steps-and-initial-version/#execute-it">Execute it!</a></h3>
+<h3 id="execute-it"><a class="toclink" href="2024/10/10/first-steps-and-initial-version/#execute-it">Execute it</a></h3>
 <p>Now you can start the prototype with <code>python initial_version.py</code> (I've cut out some noise, also the output will become better over time):</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="o">(</span>venv<span class="o">)</span><span class="w"> </span>andy@cargocult:~/offensive-langgraph/src$<span class="w"> </span>python<span class="w"> </span>initial_version.py<span class="w"> </span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="o">(</span>venv<span class="o">)</span><span class="w"> </span>andy@cargocult:~/offensivegraphs/src$<span class="w"> </span>python<span class="w"> </span>initial_version.py<span class="w"> </span>
 </span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="o">================================</span><span class="w"> </span>Human<span class="w"> </span><span class="nv">Message</span><span class="w"> </span><span class="o">=================================</span>
 </span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
 </span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>
@@ -1568,6 +1572,12 @@
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
       </main>
       
         <footer class="md-footer">
@@ -1594,10 +1604,10 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["search.suggest", "search.highlight", "content.code.annotation", "content.code.copy"], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.annotation", "content.code.copy", "navigation.expand", "navigation.instant.preview", "navigation.path", "navigation.top", "navigation.tracking", "search.highlight", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.525ec568.min.js"></script>
+      <script src="../assets/javascripts/bundle.83f73b43.min.js"></script>
       
     
   </body>

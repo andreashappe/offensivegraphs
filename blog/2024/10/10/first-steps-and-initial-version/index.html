@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.40">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.41">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.8c3ca2c6.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.0253249f.min.css">
       
         
         <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.06af60db.min.css">
@@ -315,7 +315,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
         
           
           <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
@@ -381,7 +383,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3" >
         
           
           <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
@@ -545,7 +549,7 @@
         <li class="md-nav__item">
   <a href="#execute-it" class="md-nav__link">
     <span class="md-ellipsis">
-      Execute it!
+      Execute it
     </span>
   </a>
   
@@ -677,7 +681,7 @@
 
 
 <h1 id="first-steps-and-initial-version">First Steps and Initial Version</h1>
-<p>This started when <a href="">Jürgen</a> contacted <a href="">Andreas</a> as he needed an automated attacker emulation for one of his defensive projects. Andreas wrote the initial version of <a href="https://hackingbuddy.ai">hackingBuddyGPT</a> in March 2023 (roughly 18 months ago) and much of the codebase was written for older, less-sophisticated, LLMs. Juergen had experience with <a href="https://www.langchain.com/langgraph">LangGraph</a>, so we decided to play around with using langgraph for offensive security.</p>
+<p>This started when <a href="https://github.com/brandl">Jürgen</a> contacted <a href="https://github.com/andreashappe">Andreas</a> as he needed an automated attacker emulation for one of his defensive projects. Andreas wrote the initial version of <a href="https://hackingbuddy.ai">hackingBuddyGPT</a> in March 2023 (roughly 18 months ago) and much of the codebase was written for older, less-sophisticated, LLMs. Juergen had experience with <a href="https://www.langchain.com/langgraph">LangGraph</a>, so we decided to play around with using langgraph for offensive security.</p>
 <h2 id="scencario-and-starting-situation">Scencario and Starting Situation</h2>
 <p>As an initial example we have chosen Linux Privilege Escalation: in these scenarios, you already have access to a linux system (typically over SSH) as a low-privilege user and want to become the all powerful root user.</p>
 <p>As a starting point, we were using both <a href="https://langchain-ai.github.io/langgraph/tutorials/introduction/">langgaph's quickstart tutorial</a> for rough guidance, as well as Andreas' original SSH connector to connect to a vulnerable virtual machine provided by <a href="https://github.com/ipa-lab/benchmark-privesc-linux">ipa-lab/benchmark-privesc-linux</a> (also originally written by Andreas).</p>
@@ -691,7 +695,7 @@
 <p>So as a starting point we want to replicate the functonality of <a href="https://hackingbuddy.ai">hackingBuddyGPT</a> in the most simple and abstract way. Think of it like this:</p>
 <p><img alt="Concept" src="../../../../initial_version_conceptual.drawio.png" /></p>
 <p>You have a vulnerable VM that allows for the execution of arbitrary commands via SSH. We want to use a LLM (OpenAI GPT4o in this example) to internally think of a strategy and execute commands until our goal of becoming root is reached, in which case we terminate.</p>
-<p>This prototype source code can be found <a href="https://github.com/andreashappe/offensive-langraph/tree/64ae8a080c5aa5e7255e1cb00c8ddb5adc6d1a20">in the github history</a>. If you look into the current <code>main</code> branch, the current source code will look differently.</p>
+<p>This prototype source code can be found <a href="https://github.com/andreashappe/offensivegraphs/tree/64ae8a080c5aa5e7255e1cb00c8ddb5adc6d1a20">in the github history</a>. If you look into the current <code>main</code> branch, the current source code will look differently.</p>
 <p>We split the functionality into two files: <code>ssh.py</code> for all the SSH callouts performed by the prototype, and <code>initial_version.py</code> containg the actual prototype logic.</p>
 <h3 id="tool-calling-enable-ssh-command-execution">Tool-Calling: enable SSH command execution</h3>
 <p>Tools allow LLMs to access external operations. In our case, we want LLMs to execute commands over SSH on a remote host. Let's go through parts of the code in <code>ssh.py</code>:</p>
@@ -894,9 +898,9 @@
 <h3 id="the-graph-in-its-full-glory">The graph in it's full glory</h3>
 <p>You can use <code>graph.get_graph().draw_mermaid()</code> to get a mermaid diagram with our graph:</p>
 <p><img alt="Our Graph in its full Glory" src="../../../../initial_prototype.svg" /></p>
-<h2 id="execute-it">Execute it!</h2>
+<h2 id="execute-it">Execute it</h2>
 <p>Now you can start the prototype with <code>python initial_version.py</code> (I've cut out some noise, also the output will become better over time):</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="o">(</span>venv<span class="o">)</span><span class="w"> </span>andy@cargocult:~/offensive-langgraph/src$<span class="w"> </span>python<span class="w"> </span>initial_version.py<span class="w"> </span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="o">(</span>venv<span class="o">)</span><span class="w"> </span>andy@cargocult:~/offensivegraphs/src$<span class="w"> </span>python<span class="w"> </span>initial_version.py<span class="w"> </span>
 </span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="o">================================</span><span class="w"> </span>Human<span class="w"> </span><span class="nv">Message</span><span class="w"> </span><span class="o">=================================</span>
 </span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
 </span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>
@@ -1040,6 +1044,12 @@
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
       </main>
       
         <footer class="md-footer">
@@ -1066,10 +1076,10 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["search.suggest", "search.highlight", "content.code.annotation", "content.code.copy"], "search": "../../../../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["content.code.annotation", "content.code.copy", "navigation.expand", "navigation.instant.preview", "navigation.path", "navigation.top", "navigation.tracking", "search.highlight", "search.suggest", "toc.follow"], "search": "../../../../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.525ec568.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.83f73b43.min.js"></script>
       
     
   </body>

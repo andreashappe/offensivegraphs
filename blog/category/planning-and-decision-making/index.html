@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.40">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.41">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.8c3ca2c6.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.0253249f.min.css">
       
         
         <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
@@ -313,7 +313,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
         
           
           <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
@@ -544,7 +546,7 @@
   </header>
   <div class="md-post__content md-typeset">
     <h2 id="adding-plan-and-execute-planner"><a class="toclink" href="../../2024/10/14/adding-plan-and-execute-planner/">Adding Plan-and-Execute Planner</a></h2>
-<p>All sources can be found in <a href="https://github.com/andreashappe/offensive-langgraph/tree/dbe5ae76d044e6dc876dcb86029f853a30bac565">our github history</a>.</p>
+<p>All sources can be found in <a href="https://github.com/andreashappe/offensivegraphs/tree/dbe5ae76d044e6dc876dcb86029f853a30bac565">our github history</a>.</p>
 <p>When using LLMs for complex tasks like hacking, a common problem is that they become hyper-focused upon a single attack vector and ignore all others. They go down a "depth-first" rabbit hole and never leave it. This was experienced by <a href="https://arxiv.org/abs/2310.11409">me</a> and <a href="https://arxiv.org/abs/2308.06782">others</a>.</p>
 <h3 id="plan-and-execute-pattern"><a class="toclink" href="../../2024/10/14/adding-plan-and-execute-planner/#plan-and-execute-pattern">Plan-and-Execute Pattern</a></h3>
 <p>One potential solution is the <a href="https://arxiv.org/abs/2305.04091">'plan-and-solve'-pattern</a> (often also named <a href="https://langchain-ai.github.io/langgraph/tutorials/plan-and-execute/plan-and-execute/">'plan-and-execute'-pattern</a>). in this strategy, one LLM (the <code>planner</code>) is given the task of creating a high-level task plan based upon the user-given objective. The task plan is processed by another LLM module (the <code>agent</code> or <code>executor</code>). Basically, the next step from the task plan is taken and forwarded to the executer to solve within in a limited number of steps or time.</p>
@@ -824,7 +826,7 @@
 </span><span id="__span-30-60"><a id="__codelineno-30-60" name="__codelineno-30-60"></a>        <span class="s2">&quot;past_steps&quot;</span><span class="p">:</span> <span class="p">[(</span><span class="n">task</span><span class="p">,</span> <span class="n">agent_response</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">content</span><span class="p">)],</span>
 </span><span id="__span-30-61"><a id="__codelineno-30-61" name="__codelineno-30-61"></a>    <span class="p">}</span>
 </span></code></pre></div></td></tr></table></div>
-<p>We are reusing our <a href="">initial simple agent</a> as executor on line 46. On lines 29-31 we are creating a new connection to OpenAI and configure some SSH-based tools (as mentioned in the original post) for our executor agent. This fully separated the LLM connection, graph history and supported tools from the LLM-configuration used by the plan-and-execute graph and would allow for using different LLMs for the <code>planner</code> and <code>executor</code> respectively.</p>
+<p>We are reusing our <a href="../../2024/10/10/first-steps-and-initial-version/">initial simple agent</a> as executor on line 46. On lines 29-31 we are creating a new connection to OpenAI and configure some SSH-based tools (as mentioned in the original post) for our executor agent. This fully separated the LLM connection, graph history and supported tools from the LLM-configuration used by the plan-and-execute graph and would allow for using different LLMs for the <code>planner</code> and <code>executor</code> respectively.</p>
 <p>Starting on line 49 , we execute our sub-agent and output its steps before returning the final step on line 59 as <code>past_steps</code>. This will append our agent's output (which includes a generated summary of its results) to <code>past_steps</code> within our shared state (which will subsequently be used by the <code>replanner</code> agent to refine future planning steps).</p>
 <h3 id="wiring-it-up-and-starting-it"><a class="toclink" href="../../2024/10/14/adding-plan-and-execute-planner/#wiring-it-up-and-starting-it">Wiring it up and starting it</a></h3>
 <p>The only thins left is to wire up everything, provide the initial template and output the occurring events (to see what our LLM agent is doing):</p>
@@ -895,6 +897,12 @@
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
       </main>
       
         <footer class="md-footer">
@@ -921,10 +929,10 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": ["search.suggest", "search.highlight", "content.code.annotation", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotation", "content.code.copy", "navigation.expand", "navigation.instant.preview", "navigation.path", "navigation.top", "navigation.tracking", "search.highlight", "search.suggest", "toc.follow"], "search": "../../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.525ec568.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.83f73b43.min.js"></script>
       
     
   </body>
