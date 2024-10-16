@@ -1,15 +1,16 @@
 # LangGraph x PenTesting Playground
 
-When I originally wrote `hackingBuddyGPT` around Feb/March 2023, LLM tooling was a bit sparse. Let's see what happens if we try to re-use some of hackingbuddyGPT's concepts with a modern framework.
+When I originally wrote [hackingBuddyGPT](https://github.com/ipa-lab/hackingBuddyGPT) around Feb/March 2023, LLM tooling was a bit sparse. Let's see what happens if we try to re-use some of hackingbuddyGPT's concepts with a modern framework.
 
+Documentation and examples can be found at [https://offensivegraphs.ai].
 
-# Disclaimers
+## Disclaimers
 
 ### Disclaimer 1
 
 This project is an experimental application and is provided "as-is" without any warranty, express or implied. By using this software, you agree to assume all risks associated with its use, including but not limited to data loss, system failure, or any other issues that may arise.
 
-The developers and contributors of this project do not accept any responsibility or liability for any losses, damages, or other consequences that may occur as a result of using this software. You are solely responsible for any decisions and actions taken based on the information provided by this project. 
+The developers and contributors of this project do not accept any responsibility or liability for any losses, damages, or other consequences that may occur as a result of using this software. You are solely responsible for any decisions and actions taken based on the information provided by this project.
 
 **Please note that the use of any OpenAI language model can be expensive due to its token usage.** By utilizing this project, you acknowledge that you are responsible for monitoring and managing your own token usage and the associated costs. It is highly recommended to check your OpenAI API usage regularly and set up any necessary limits or alerts to prevent unexpected charges.
 

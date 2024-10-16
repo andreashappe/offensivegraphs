@@ -8,7 +8,7 @@ categories:
 ---
 # First Steps and Initial Version
 
-This started when [Jürgen]() contacted [Andreas]() as he needed an automated attacker emulation for one of his defensive projects. Andreas wrote the initial version of [hackingBuddyGPT](https://hackingbuddy.ai) in March 2023 (roughly 18 months ago) and much of the codebase was written for older, less-sophisticated, LLMs. Juergen had experience with [LangGraph](https://www.langchain.com/langgraph), so we decided to play around with using langgraph for offensive security.
+This started when [Jürgen](https://github.com/brandl) contacted [Andreas](https://github.com/andreashappe) as he needed an automated attacker emulation for one of his defensive projects. Andreas wrote the initial version of [hackingBuddyGPT](https://hackingbuddy.ai) in March 2023 (roughly 18 months ago) and much of the codebase was written for older, less-sophisticated, LLMs. Juergen had experience with [LangGraph](https://www.langchain.com/langgraph), so we decided to play around with using langgraph for offensive security.
 
 ## Scencario and Starting Situation
 
@@ -30,7 +30,7 @@ So as a starting point we want to replicate the functonality of [hackingBuddyGPT
 
 You have a vulnerable VM that allows for the execution of arbitrary commands via SSH. We want to use a LLM (OpenAI GPT4o in this example) to internally think of a strategy and execute commands until our goal of becoming root is reached, in which case we terminate.
 
-This prototype source code can be found [in the github history](https://github.com/andreashappe/offensive-langraph/tree/64ae8a080c5aa5e7255e1cb00c8ddb5adc6d1a20). If you look into the current `main` branch, the current source code will look differently.
+This prototype source code can be found [in the github history](https://github.com/andreashappe/offensivegraphs/tree/64ae8a080c5aa5e7255e1cb00c8ddb5adc6d1a20). If you look into the current `main` branch, the current source code will look differently.
 
 We split the functionality into two files: `ssh.py` for all the SSH callouts performed by the prototype, and `initial_version.py` containg the actual prototype logic.
 
@@ -111,7 +111,6 @@ llm_with_tools = llm.bind_tools(tools)
 
 Now we create a connection to the LLM (`gpt-4o` in our case) and register some tools that the LLM is allowed to use. As tool, we are using the `ssh_execute_command` function we described before.
 
-
 ```python title="initial_version.py: Begin with our Graph" linenums="31"
 class State(TypedDict):
     messages: Annotated[list, add_messages]
@@ -124,7 +123,6 @@ Now it gets interessting: we start with defining our langgraph graph. Within lan
 The information passed between nodes is stored in the `State`. In our case, we just use a list of `messages`. `Annotated` is from python's `typing` library and allows us to add some metadata to the `messages` variable. In this case, we store the method `add_messages` as meta-data. Langgraph will know through this, that if new messages are added, it will call `add_messages` to add the messages to the list. In our case, we just have a growing list, but you could implement a sliding window or some sort of compaction/compression mechnism through this.
 
 Finally, we create our graph (named `graph_builder`). We tell it that `State` will be used to pass messages.
-
 
 ```python title="initial_version.py: Our first node, the LLM call" linenums="38"
 def chatbot(state: State):
@@ -166,7 +164,6 @@ def route_tools(state: State):
 
 This was copied verbose from the tutorial. In summary, it checks if there's a message within the state. If it has a message and the message is a `tool_calls` message, i.e., we want to execute an external tool, the next node/action will be our tool node. Otherwise we go to the `END` node and finish our graph. Why does this work? Well, as long as there are tool calls, the tools will be executed and the results appended to the end of the message log. As soon as the LLM can find an answer, it will send out the answer (not a `tool_call`), thus the `route_tools` method will go to the `END` node.
 
-
 ```python title="initial_version.py: finalize the graph!" linenums="66"
 memory = MemorySaver()
 graph = graph_builder.compile(checkpointer=memory)
@@ -175,7 +172,6 @@ graph = graph_builder.compile(checkpointer=memory)
 Now we create the graph. What is `MemorySaver`? This stores our state between interactions (gives us a in-memory storage while running our agent).
 
 Now, what to use as our initial message (this will be the first message within our `state['messages'] list and task our LLM to "do stuff"). We're using an adapted prompt from our hackingBuddyGPT prototype:
-
 
 ```python title="initial_version.py: The initial user question for the LLM" linenums="70"
 template = Template("""
@@ -218,12 +214,12 @@ You can use `graph.get_graph().draw_mermaid()` to get a mermaid diagram with our
 
 ![Our Graph in its full Glory](initial_prototype.svg)
 
-## Execute it!
+## Execute it
 
 Now you can start the prototype with `python initial_version.py` (I've cut out some noise, also the output will become better over time):
 
 ```bash
-(venv) andy@cargocult:~/offensive-langgraph/src$ python initial_version.py 
+(venv) andy@cargocult:~/offensivegraphs/src$ python initial_version.py 
 ================================ Human Message =================================
 
 

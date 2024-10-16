@@ -8,7 +8,7 @@ categories:
 ---
 # Adding Plan-and-Execute Planner
 
-All sources can be found in [our github history](https://github.com/andreashappe/offensive-langgraph/tree/dbe5ae76d044e6dc876dcb86029f853a30bac565).
+All sources can be found in [our github history](https://github.com/andreashappe/offensivegraphs/tree/dbe5ae76d044e6dc876dcb86029f853a30bac565).
 
 When using LLMs for complex tasks like hacking, a common problem is that they become hyper-focused upon a single attack vector and ignore all others. They go down a "depth-first" rabbit hole and never leave it. This was experienced by [me](https://arxiv.org/abs/2310.11409) and [others](https://arxiv.org/abs/2308.06782).
 
@@ -216,7 +216,7 @@ def execute_step(state: PlanExecute):
     }
 ```
 
-We are reusing our [initial simple agent]() as executor on line 46. On lines 29-31 we are creating a new connection to OpenAI and configure some SSH-based tools (as mentioned in the original post) for our executor agent. This fully separated the LLM connection, graph history and supported tools from the LLM-configuration used by the plan-and-execute graph and would allow for using different LLMs for the `planner` and `executor` respectively.
+We are reusing our [initial simple agent](2024-10-10-first-steps-and-initial-version.md) as executor on line 46. On lines 29-31 we are creating a new connection to OpenAI and configure some SSH-based tools (as mentioned in the original post) for our executor agent. This fully separated the LLM connection, graph history and supported tools from the LLM-configuration used by the plan-and-execute graph and would allow for using different LLMs for the `planner` and `executor` respectively.
 
 Starting on line 49 , we execute our sub-agent and output its steps before returning the final step on line 59 as `past_steps`. This will append our agent's output (which includes a generated summary of its results) to `past_steps` within our shared state (which will subsequently be used by the `replanner` agent to refine future planning steps).
 

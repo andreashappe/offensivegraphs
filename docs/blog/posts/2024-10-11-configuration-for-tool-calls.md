@@ -7,7 +7,7 @@ categories:
 ---
 # Improving Configuration Handling, esp. for Tools
 
-While being quite happy that the [initial prototype]() worked within hours, its code was very prototype-y, i.e., much of its configuration was hard-coded. In a second step, we want to fix this by making our target information (the SSH connection) configurable and remvoe all hard-coded credentials from the code.
+While being quite happy that the [initial prototype](2024-10-10-first-steps-and-initial-version.md) worked within hours, its code was very prototype-y, i.e., much of its configuration was hard-coded. In a second step, we want to fix this by making our target information (the SSH connection) configurable and remove all hard-coded credentials from the code.
 
 ## Big Picture
 
@@ -26,13 +26,13 @@ The prototype will read this for configuration data. With this, the initial part
 
 After looking into the [@tool annotation](https://api.python.langchain.com/en/latest/tools/langchain_core.tools.tool.html) for functions, this did not look like the perfect approach. Instead we opted towards subclassing [BaseTool](https://api.python.langchain.com/en/latest/core/tools/langchain_core.tools.base.BaseTool.html). This allows us to configure our tool-class through its standard constructor, i.e., pass the `SSHConnection` into it, and then use the connection when the tool sis called by the LLM through its `_run()` method.
 
-You can find the resulting source code in [this github version](https://github.com/andreashappe/offensive-langgraph/tree/26c02488e7da504cade55fda0094225bac055f01). Please note, that I had a bug initially ([fixed here](https://github.com/andreashappe/offensive-langgraph/commit/576105f2a358c7aa6877d3bcf0395a5ec2997e7f)). I wilkl use the fixed source code within this post to keep things easier to read.
+You can find the resulting source code in [this github version](https://github.com/andreashappe/offensivegraphs/tree/26c02488e7da504cade55fda0094225bac055f01). Please note, that I had a bug initially ([fixed here](https://github.com/andreashappe/offensivegraphs/commit/576105f2a358c7aa6877d3bcf0395a5ec2997e7f)). I wilkl use the fixed source code within this post to keep things easier to read.
 
 Let's start with our updated tool that will be configurable:
 
 ## Making our Tool configurable by switching to `BaseTool`
 
-You can find the full source code at [within github](https://github.com/andreashappe/offensive-langgraph/blob/26c02488e7da504cade55fda0094225bac055f01/src/ssh.py). This change was pretty straight-forward.
+You can find the full source code at [within github](https://github.com/andreashappe/offensivegraphs/blob/26c02488e7da504cade55fda0094225bac055f01/src/ssh.py). This change was pretty straight-forward.
 
 Instead of writing a function, we now create a class for each tool. We have to subclass [BaseTool](https://api.python.langchain.com/en/latest/tools/langchain_core.tools.BaseTool.html), the parameters for our tool are now defined in a separate class which is a subclass of `BaseModel`:
 
@@ -100,7 +100,7 @@ Next step is wiring everything up within our prototype code.
 
 ## Improving the Configuration Handling
 
-We now have a tool that's configurable whileall needed configuration is in the `.env` file. Let's connect them! First, we introduce a simple helper function that receives an environmental variable or throws an error otherwise:
+We now have a tool that's configurable while all needed configuration is in the `.env` file. Let's connect them! First, we introduce a simple helper function that receives an environmental variable or throws an error otherwise:
 
 ```python title="initial_version.py: environment variable helper" linenums="16"
 def get_or_fail(name: str) -> str:
@@ -123,7 +123,7 @@ def get_ssh_connection_from_env() -> SSHConnection:
     return SSHConnection(host=host, hostname=hostname, username=username, password=password)
 ```
 
-Finally, we can wire everything up within our [prototype](https://github.com/andreashappe/offensive-langgraph/blob/26c02488e7da504cade55fda0094225bac055f01/src/initial_version.py):
+Finally, we can wire everything up within our [prototype](https://github.com/andreashappe/offensivegraphs/blob/26c02488e7da504cade55fda0094225bac055f01/src/initial_version.py):
 
 ```python title="initial_version.py: retrieving configuration data" linenums="24"
 load_dotenv()
@@ -131,7 +131,7 @@ conn = get_ssh_connection_from_env()
 get_or_fail("OPENAI_API_KEY") # langgraph will use this env variable itself
 ```
 
-Note that we now have a configured SSH connection within `conn`. When creating the tools for our LLMs, instead of passing the functions (as we did with `@tool`), we now pass in the instanciated tool-classes which receive the configured SSH connection through their constructor parameters (line 33, we also added a second tool `SSHTestCredentialsTool` for credential checking):
+Note that we now have a configured SSH connection within `conn`. When creating the tools for our LLMs, instead of passing the functions (as we did with `@tool`), we now pass in the instantiated tool-classes which receive the configured SSH connection through their constructor parameters (line 33, we also added a second tool `SSHTestCredentialsTool` for credential checking):
 
 ```python title="initial_version.py: Getting all configuration from the env" linenums="32"
 llm = ChatOpenAI(model="gpt-4o", temperature=0)

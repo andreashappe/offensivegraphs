@@ -28,9 +28,9 @@ We see this as a benefit, we learn using LLMs and offensive security.
 
 | Example | Domain | Summary | Further Documentation |
 | -- | -- | -- | -- |
-| initial example | linux priv-esc | good first example | [initial post](blog/2024/10/10/first-steps-and-initial-version/#the-first-prototype), [tools and configuration](blog/2024/10/11/improving-configuration-handling-esp-for-tools/) |
-| react agent | linux priv-esc | use langgraph to reduce code | [Using `create_react_agent`](blog/2024/10/12/simplify-our-tool-calling-agent-through-create_react_agent/) |
-| plan-and-execute | linux priv-esc | multi-layer planing | [Adding Plan-and-Execute Planner](blog/2024/10/14/adding-plan-and-execute-planner/) |
+| [initial example](https://github.com/andreashappe/offensivegraphs/blob/main/src/initial_version.py) | linux priv-esc | good first example | [initial post](blog/posts/2024-10-10-first-steps-and-initial-version.md), [tools and configuration](blog/posts/2024-10-11-configuration-for-tool-calls.md) |
+| [react agent](https://github.com/andreashappe/offensivegraphs/blob/main/src/switch-to-react.py) | linux priv-esc | use langgraph to reduce code | [Using `create_react_agent`](blog/posts/2024-10-12-create_react_agent.md) |
+| [plan-and-execute](https://github.com/andreashappe/offensivegraphs/blob/main/src/plan_and_execute.py) | linux priv-esc | multi-layer planing | [Adding Plan-and-Execute Planner](blog/posts/2024-10-14-plan-and-exec.md) |
 
 ## How did we get there?
 
@@ -64,4 +64,6 @@ $ mv env.example .env
 
 ## How to contribute
 
-- link to github and github issues
+We try to keep all development open on github at [https://github.com/andreashappe/offensivegraphs] with the exemption that security-critical research might only be released after responsible disclosure with the respective targets.
+
+We're happy to accept contributions [through github pull-requests](https://github.com/andreashappe/offensivegraphs/pulls) as well as bug-reports/ideas at [github's issue tracker](https://github.com/andreashappe/offensivegraphs/issues). Feel free to contact [Andreas](mailto:andreas@offensive.one) in case of questions/ideas.
