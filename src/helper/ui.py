@@ -4,28 +4,35 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.pretty import Pretty
 
-def print_event(console: Console, event):
+def get_panels_from_event(console: Console, event):
+    panels = []
+
     if "messages" in event:
         message = event["messages"][-1]
         if isinstance(message, HumanMessage):
-            console.print(Panel(str(message.content), title="Punny Human says"))
+            panels.append(Panel(str(message.content), title="Input to the LLM"))
         elif isinstance(message, ToolMessage):
-            console.print(Panel(str(message.content), title=f"Tool Reponse from {message.name}"))
+            panels.append(Panel(str(message.content), title=f"Tool Reponse from {message.name}"))
         elif isinstance(message, AIMessage):
             if message.content != '':
-                console.print(Panel(str(message.content), title="AI says"))
-            elif len(message.tool_calls) == 1:
-                tool = message.tool_calls[0]
-                console.print(Panel(Pretty(tool["args"]), title=f"Tool Call to {tool["name"]}"))
+                panels.append(Panel(str(message.content), title="Output from the LLM"))
+            elif len(message.tool_calls) >= 1:
+                for tool in message.tool_calls:
+                    panels.append(Panel(Pretty(tool["args"]), title=f"Tool Call to {tool["name"]}"))
             else:
-                print("WHAT do you want?")
-                console.log(message)
+                panels.append(Panel(Pretty(message), title='unknown message type'))
         else:
-            print("WHAT message are you?")
-            console.log(message)
+            raise Exception("Unknown message type: " + str(message))
     else:
-        print("WHAT ARE YOU??????")
+        console.log("no messages in event?")
         console.log(event)
+    return panels
+
+def print_event(console: Console, event):
+    panels = get_panels_from_event(console, event)
+
+    for panel in panels:
+        console.print(panel)
 
 def print_event_stream(console: Console, events):
     for event in events:
