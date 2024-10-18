@@ -1,6 +1,7 @@
 ---
 authors:
     - andreashappe
+    - brandl
 date: 2024-10-11
 categories:
     - 'initial journey'
