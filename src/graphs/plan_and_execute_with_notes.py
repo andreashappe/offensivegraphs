@@ -35,6 +35,9 @@ Your original plan was this:
 You have currently done the follow steps:
 {past_steps}
 
+Your notes are:
+{notes}
+
 Update your plan accordingly. If no more steps are needed and you can return to the user, then respond with that. Otherwise, fill out the plan. Only add steps to the plan that still NEED to be done. Do not return previously done steps as part of the plan.
 
 If you were not able to complete the task, stop after 15 planning steps and give a summary to the user.
@@ -46,6 +49,7 @@ class PlanExecute(TypedDict):
     input: str # the initial user-given objective
     plan: List[str]
     past_steps: Annotated[List[Tuple], operator.add]
+    notes: str
     response: str # response from the agent to the user
 
 ### Data Structures: LLM Responses

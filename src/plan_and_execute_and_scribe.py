@@ -11,7 +11,7 @@ from helper.common import get_or_fail
 from helper.ui import print_event
 from tools.ssh import get_ssh_connection_from_env, SshTestCredentialsTool, SshExecuteTool
 from graphs.execute_with_scribe import create_chat_tool_scribe_agent_graph
-from graphs.plan_and_execute import create_plan_and_execute_graph
+from graphs.plan_and_execute_with_notes import create_plan_and_execute_graph
 
 # setup configuration from environment variables
 load_dotenv()
