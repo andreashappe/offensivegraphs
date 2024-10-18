@@ -581,8 +581,47 @@ Our shared state (<code>PlanExecute</code>) must accommodate the notes taken by 
 </span></code></pre></div>
 <p>Notice the inclusion of <code>{notes}</code> in the prompt, allowing the Replanner to make informed decisions based on the accumulated notes.</p>
 <h4 id="conclusion"><a class="toclink" href="2024/10/18/the-journey-to-adding-a-scribe/#conclusion">Conclusion</a></h4>
-<p>The addition of the Scribe node has been transformative for our plan-and-execute architecture. By meticulously capturing and managing contextual information, we've not only optimized the performance of our LLMs but also enhanced the system's overall reasoning capabilities. This structured approach to note-taking paves the way for more sophisticated and efficient planning mechanisms, setting the stage for future advancements in our multi-agent architecture.</p>
-<p>As we continue to refine and expand our system, the Scribe will undoubtedly play a pivotal role in ensuring that our agents remain informed, agile, and capable of tackling increasingly complex tasks with unwavering precision.</p>
+<p>Let's take a look at the notes after we finished our run:</p>
+<p><div class="language-markdown highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>    # Linux System Notes
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    ## User Information
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span>Current user: <span class="sb">`lowpriv`</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span>User password: <span class="sb">`trustno1`</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span>User privilege: Low-privilege
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span>User ID: <span class="sb">`uid=1001(lowpriv)`</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span>Group ID: <span class="sb">`gid=1001(lowpriv)`</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span>Groups: <span class="sb">`1001(lowpriv)`</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>    ## Authentication
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span>SSH login successful with provided credentials (<span class="sb">`lowpriv`</span> / <span class="sb">`trustno1`</span>).
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span>User <span class="sb">`lowpriv`</span> is not root.
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>    ## Privilege Escalation
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span>Successful privilege escalation to root using SUID binary <span class="sb">`/usr/bin/python3.11`</span>.
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span>Command used: <span class="sb">`python3.11 -c &#39;import os; os.setuid(0); os.system(&quot;/bin/bash&quot;)&#39;`</span>.
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>
+</span><span id="__span-7-19"><a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>    ## SUID Binaries
+</span><span id="__span-7-20"><a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span>Identified SUID binaries:
+</span><span id="__span-7-21"><a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span><span class="sb">`/usr/bin/python3.11`</span> (used for privilege escalation)
+</span><span id="__span-7-22"><a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span><span class="sb">`/usr/bin/newgrp`</span>
+</span><span id="__span-7-23"><a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span><span class="sb">`/usr/bin/chfn`</span>
+</span><span id="__span-7-24"><a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span><span class="sb">`/usr/bin/gpasswd`</span>
+</span><span id="__span-7-25"><a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span><span class="sb">`/usr/bin/chsh`</span>
+</span><span id="__span-7-26"><a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span><span class="sb">`/usr/bin/passwd`</span>
+</span><span id="__span-7-27"><a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span><span class="sb">`/usr/bin/sudo`</span>
+</span><span id="__span-7-28"><a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span><span class="sb">`/usr/bin/mount`</span>
+</span><span id="__span-7-29"><a id="__codelineno-7-29" name="__codelineno-7-29" href="#__codelineno-7-29"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span><span class="sb">`/usr/bin/su`</span>
+</span><span id="__span-7-30"><a id="__codelineno-7-30" name="__codelineno-7-30" href="#__codelineno-7-30"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span><span class="sb">`/usr/bin/find`</span>
+</span><span id="__span-7-31"><a id="__codelineno-7-31" name="__codelineno-7-31" href="#__codelineno-7-31"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span><span class="sb">`/usr/bin/umount`</span>
+</span><span id="__span-7-32"><a id="__codelineno-7-32" name="__codelineno-7-32" href="#__codelineno-7-32"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span><span class="sb">`/usr/lib/openssh/ssh-keysign`</span>
+</span><span id="__span-7-33"><a id="__codelineno-7-33" name="__codelineno-7-33" href="#__codelineno-7-33"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span><span class="sb">`/usr/lib/dbus-1.0/dbus-daemon-launch-helper`</span>
+</span><span id="__span-7-34"><a id="__codelineno-7-34" name="__codelineno-7-34" href="#__codelineno-7-34"></a>
+</span><span id="__span-7-35"><a id="__codelineno-7-35" name="__codelineno-7-35" href="#__codelineno-7-35"></a>    ## Next Steps
+</span><span id="__span-7-36"><a id="__codelineno-7-36" name="__codelineno-7-36" href="#__codelineno-7-36"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span>Verify system access and capabilities as root.
+</span><span id="__span-7-37"><a id="__codelineno-7-37" name="__codelineno-7-37" href="#__codelineno-7-37"></a><span class="w">    </span><span class="k">-</span><span class="w"> </span>Document any additional findings or configurations.
+</span></code></pre></div>
+The Scribe agent was able to reduce the vast output of our tool calls into a concise fact sheet. Depending on the recursion-limit we set to our executor this can be the result of multiple thousend lines of command line output.</p>
+<p>This structured approach to note-taking paves the way for more sophisticated and efficient planning mechanisms, setting the stage for future advancements in our journey to multi-step attack planning. As we continue to refine and expand our system, the Scribe will undoubtedly play a pivotal role in ensuring that our agents remain informed, agile, and capable of tackling increasingly complex tasks.</p>
     
   </div>
 </article>
