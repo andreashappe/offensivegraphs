@@ -41,3 +41,10 @@ extra:
   analytics:
     provider: google
     property: G-XVEVXNXJ44
+nav:
+  - 'Welcome to the Playground': index.md
+  - 'Examples':
+    - 'Linux Privilege Escalation': examples/linux-priv-esc.md
+  - 'Documentation Series:':
+    - 'Security Agents with LangGraph': series/initial-journey.md
+    - 'Planning and Decision Making': series/planning-and-decision-making.md
