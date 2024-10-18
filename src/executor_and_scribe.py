@@ -56,7 +56,7 @@ def scribe(state: State):
                                 Try to stay within 25 Lines only write about things we know not about the task.
                                 Here are your current notes:
                                 {notes} 
-                                Here is a toolcwe called {tool_call} 
+                                Here is a tool we called {tool_call} 
                                 which gave us this output {tool_response}""").content}
 
 def route_tools(state: State):
@@ -87,11 +87,11 @@ graph_builder.add_edge("chatbot", END)
 
 # now instantiate the graph. We add memory, so that our LLM action
 # remembers what it has executed before (as well as the reults it got)
-def create_executor_graph():
+def create_executor_with_scribe_graph():
     memory = MemorySaver()
     return graph_builder.compile(checkpointer=memory)
 
-graph = create_executor_graph()
+graph = create_executor_with_scribe_graph()
 
 if __name__ == '__main__':
     # Initialize the console and layout
