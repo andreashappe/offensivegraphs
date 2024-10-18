@@ -128,7 +128,6 @@ This block ensures that the notes are displayed in real-time, providing a clear 
 Here is a video of the Scribe in action, you can reproduce it by running `python src/executor_and_scribe.py`:
 <video src="/screencast_offensive_graph.mp4" controls></video>
 
-
 #### 5. **Managing Shared State with the Scribe**
 Let's move from our small example to a more complex one by integrating the Scribe into the `plan_and_execute` graph:
 Our shared state (`PlanExecute`) must accommodate the notes taken by the Scribe. Here's the updated structure:
@@ -176,9 +175,49 @@ If you were not able to complete the task, stop after 15 planning steps and give
 Notice the inclusion of `{notes}` in the prompt, allowing the Replanner to make informed decisions based on the accumulated notes.
 
 ### Conclusion
+Let's take a look at the notes after we finished our run:
 
-The addition of the Scribe node has been transformative for our plan-and-execute architecture. By meticulously capturing and managing contextual information, we've not only optimized the performance of our LLMs but also enhanced the system's overall reasoning capabilities. This structured approach to note-taking paves the way for more sophisticated and efficient planning mechanisms, setting the stage for future advancements in our multi-agent architecture.
+``` markdown
+    # Linux System Notes
 
-As we continue to refine and expand our system, the Scribe will undoubtedly play a pivotal role in ensuring that our agents remain informed, agile, and capable of tackling increasingly complex tasks with unwavering precision.
+    ## User Information
+    - Current user: `lowpriv`
+    - User password: `trustno1`
+    - User privilege: Low-privilege
+    - User ID: `uid=1001(lowpriv)`
+    - Group ID: `gid=1001(lowpriv)`
+    - Groups: `1001(lowpriv)`
+
+    ## Authentication
+    - SSH login successful with provided credentials (`lowpriv` / `trustno1`).
+    - User `lowpriv` is not root.
+
+    ## Privilege Escalation
+    - Successful privilege escalation to root using SUID binary `/usr/bin/python3.11`.
+    - Command used: `python3.11 -c 'import os; os.setuid(0); os.system("/bin/bash")'`.
+
+    ## SUID Binaries
+    - Identified SUID binaries:
+    - `/usr/bin/python3.11` (used for privilege escalation)
+    - `/usr/bin/newgrp`
+    - `/usr/bin/chfn`
+    - `/usr/bin/gpasswd`
+    - `/usr/bin/chsh`
+    - `/usr/bin/passwd`
+    - `/usr/bin/sudo`
+    - `/usr/bin/mount`
+    - `/usr/bin/su`
+    - `/usr/bin/find`
+    - `/usr/bin/umount`
+    - `/usr/lib/openssh/ssh-keysign`
+    - `/usr/lib/dbus-1.0/dbus-daemon-launch-helper`
+
+    ## Next Steps
+    - Verify system access and capabilities as root.
+    - Document any additional findings or configurations.
+```
+The Scribe agent was able to reduce the vast output of our tool calls into a concise fact sheet. Depending on the recursion-limit we set to our executor this can be the result of multiple thousend lines of command line output.
+
+This structured approach to note-taking paves the way for more sophisticated and efficient planning mechanisms, setting the stage for future advancements in our journey to multi-step attack planning. As we continue to refine and expand our system, the Scribe will undoubtedly play a pivotal role in ensuring that our agents remain informed, agile, and capable of tackling increasingly complex tasks.
 
 
