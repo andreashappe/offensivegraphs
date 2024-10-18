@@ -1,6 +1,5 @@
 ---
 authors:
-    - andreashappe
     - brandl
 date: 2024-10-18
 categories:
