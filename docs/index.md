@@ -36,8 +36,8 @@ We see this as a benefit, we learn using LLMs and offensive security.
 
 We document our journey through blog-posts that explain our prototypes and the decisions behind them:
 
-- [Initial Journey and Exploration](blog/category/initial-journey/)
-- [Planning and Decision-Making](blog/category/planning-and-decision-making/)
+- [Security Agents with LangGraph](series/initial-journey.md)
+- [Planning and Decision-Making](series/planning-and-decision-making.md)
 
 ## How to setup?
 
