@@ -3,6 +3,9 @@ site_url: https://offensivegraphs.ai
 repo_url: https://github.com/andreashappe/offensivegraphs
 theme:
   name: material
+  icon:
+    logo: material/graph-outline
+  favicon: images/favicon.png
   features:
     - content.code.annotation
     - content.code.copy
