@@ -433,6 +433,174 @@
     <div class="md-post__meta md-meta">
       <ul class="md-meta__list">
         <li class="md-meta__item">
+          <time datetime="2024-10-18 00:00:00">October 18, 2024</time></li>
+        
+          <li class="md-meta__item">
+            in
+            
+              <a href="./" class="md-meta__link">initial-journey</a>, 
+              <a href="../planning-and-decision-making/" class="md-meta__link">planning-and-decision-making</a></li>
+        
+        
+          
+          <li class="md-meta__item">
+            
+              6 min read
+            
+          </li>
+        
+      </ul>
+      
+    </div>
+  </header>
+  <div class="md-post__content md-typeset">
+    <h2 id="the-journey-to-adding-a-scribe"><a class="toclink" href="../../2024/10/18/the-journey-to-adding-a-scribe/">The Journey to Adding a Scribe</a></h2>
+<p>As our plan-and-execute architecture evolved, we encountered a pivotal challenge: managing the ever-growing context within our Language Learning Models (LLMs). </p>
+<p>Initially, our system thrived on a straightforward workflow, but as tasks became more complex, we need a way to efficiently handle and retain crucial information without overwhelming the LLMs (or us humans in the loop). This is where the <strong>Scribe</strong> node comes in, marking a significant milestone in our project's journey.</p>
+<h4 id="why-we-added-a-scribe-node-to-take-notes"><a class="toclink" href="../../2024/10/18/the-journey-to-adding-a-scribe/#why-we-added-a-scribe-node-to-take-notes">Why We Added a Scribe Node to Take Notes</a></h4>
+<p>In our initial setup, the planner and executor nodes worked together to formulate and execute plans based on a rather simple feedback loop. However, as the complexity of tasks increased, the need for a systematic way to capture and store and condense information became evident. </p>
+<p>The <strong>Scribe</strong> node was introduced to address this very need. By automatically taking notes of every significant step and interaction, the Scribe ensures that valuable information is preserved throughout the execution process. This not only provides a clear high level transcript but also serves as a reliable reference for future planning and decision-making.</p>
+<h4 id="reducing-context-size-for-llms-why-it-matters"><a class="toclink" href="../../2024/10/18/the-journey-to-adding-a-scribe/#reducing-context-size-for-llms-why-it-matters">Reducing Context Size for LLMs: Why It Matters</a></h4>
+<p>LLMs, while powerful, have inherent limitations in terms of context length. Feeding them with excessively large contexts can lead to diminished performance, increased latency, and higher computational costs. By integrating the Scribe node, we strategically harvest essential information from the active context to a structured note. This reduction in context size ensures that the LLMs operate within their optimal parameters, maintaining efficiency and accuracy. Moreover, it prevents the model from getting bogged down by redundant or irrelevant information, allowing it to focus on what's truly important.</p>
+<h4 id="step-by-step-guide-to-implementing-the-scribe-node"><a class="toclink" href="../../2024/10/18/the-journey-to-adding-a-scribe/#step-by-step-guide-to-implementing-the-scribe-node">Step-by-Step Guide to Implementing the Scribe Node</a></h4>
+<p>Integrating the Scribe node into our existing architecture involves a series of methodical steps. Below is a comprehensive guide to help you navigate this integration seamlessly.</p>
+<h5 id="1-understanding-the-scribes-role"><a class="toclink" href="../../2024/10/18/the-journey-to-adding-a-scribe/#1-understanding-the-scribes-role">1. <strong>Understanding the Scribe's Role</strong></a></h5>
+<p>Before diving into the implementation, it's crucial to grasp the Scribe's responsibilities:</p>
+<ul>
+<li><strong>Note-Taking:</strong> Automatically record significant events, tool responses, and decisions made by the executor.</li>
+<li><strong>Context Management:</strong> Store notes in a structured format to reduce the active context size for the LLMs.</li>
+<li><strong>Facilitating Replanning:</strong> Provide the Replanner node with accurate and concise information to refine future plans.</li>
+</ul>
+<h5 id="2-implementing-the-scribe-function"><a class="toclink" href="../../2024/10/18/the-journey-to-adding-a-scribe/#2-implementing-the-scribe-function">2. <strong>Implementing the Scribe Function</strong></a></h5>
+<p>The core of the Scribe node lies in its ability to process and store notes effectively. Here's how it's implemented in <code>executor_and_scribe.py</code>:</p>
+<p><div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">class</span> <span class="nc">State</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>    <span class="n">notes</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>    <span class="n">messages</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">add_messages</span><span class="p">]</span>
+</span></code></pre></div>
+First we define a new State that includes a <code>notes</code> field. This is where the scribe will store our notes.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="k">def</span> <span class="nf">scribe</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>    <span class="k">if</span> <span class="n">messages</span> <span class="o">:=</span> <span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;messages&quot;</span><span class="p">,</span> <span class="p">[]):</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>        <span class="n">mission</span> <span class="o">=</span> <span class="n">messages</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">content</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>        <span class="n">tool_call</span> <span class="o">=</span> <span class="n">messages</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>        <span class="n">tool_response</span> <span class="o">=</span> <span class="n">messages</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">content</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>    <span class="n">notes</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;notes&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;The task is </span><span class="si">{</span><span class="n">mission</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="n">llm</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot; You are tasked with taking notes of everything we learned about this linux system in a structured way.</span>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="s2">                                Keep your notes containing only hard facts in markdown and prune them regularly to only keep relevant facts.</span>
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="s2">                                Try to stay within 25 Lines only write about things we know not about the task.</span>
+</span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="s2">                                Here are your current notes:</span>
+</span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="s2">                                </span><span class="si">{</span><span class="n">notes</span><span class="si">}</span><span class="s2"> </span>
+</span><span id="__span-15-12"><a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a><span class="s2">                                Here is a tool we called </span><span class="si">{</span><span class="n">tool_call</span><span class="si">}</span><span class="s2"> </span>
+</span><span id="__span-15-13"><a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a><span class="s2">                                which gave us this output </span><span class="si">{</span><span class="n">tool_response</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">content</span><span class="p">}</span>
+</span></code></pre></div>
+<p>This function performs the following actions:</p>
+<ul>
+<li><strong>Extracting Information:</strong> Retrieves the mission statement (first prompt made), the last tool call, and the output that the tool call returned.</li>
+<li><strong>Generating Notes:</strong> Utilizes the LLM to format and update the notes, ensuring they remain concise and relevant.</li>
+<li><strong>Returning Updated State:</strong> Outputs the updated notes to be stored in the shared state.</li>
+</ul>
+<p>Let's break down the scribe prompt:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="sa">f</span><span class="s2">&quot;&quot;&quot;You are tasked with taking notes of everything we learned about this linux system in a structured way.</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="s2">Keep your notes containing only hard facts in markdown and prune them regularly to only keep relevant facts.</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="s2">Try to stay within 25 Lines only write about things we know not about the task.</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="s2">Here are your current notes:</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="si">{</span><span class="n">notes</span><span class="si">}</span><span class="s2"> </span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="s2">Here is a tool we called </span><span class="si">{</span><span class="n">tool_call</span><span class="si">}</span><span class="s2"> </span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="s2">which gave us this output </span><span class="si">{</span><span class="n">tool_response</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
+</span></code></pre></div>
+<p>This prompt is used to generate the notes. Telling it to stick with markdown and prune the notes to only keep relevant facts will keep the notes from getting too long and cluttered. It will also come in handy later when we present the notes to the user.</p>
+<h5 id="3-wiring-the-scribe-into-the-workflow"><a class="toclink" href="../../2024/10/18/the-journey-to-adding-a-scribe/#3-wiring-the-scribe-into-the-workflow">3. <strong>Wiring the Scribe into the Workflow</strong></a></h5>
+<p>To ensure the Scribe operates seamlessly within our graph, we need to integrate it as a node in the state graph. 
+There are multiple ways to go about this but we decided to add the Scribe node as a node in the graph right after the tools node.</p>
+<p>And within the graph builder:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">graph_builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;scribe&quot;</span><span class="p">,</span> <span class="n">scribe</span><span class="p">)</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="n">graph_builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;tools&quot;</span><span class="p">,</span> <span class="s2">&quot;scribe&quot;</span><span class="p">)</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="n">graph_builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;scribe&quot;</span><span class="p">,</span> <span class="s2">&quot;chatbot&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<p>This setup ensures that after a tool is executed, the Scribe processes the outcome before returning control to the executor.</p>
+<h5 id="4-testing-the-scribe-integration"><a class="toclink" href="../../2024/10/18/the-journey-to-adding-a-scribe/#4-testing-the-scribe-integration">4. <strong>Testing the Scribe Integration</strong></a></h5>
+<p>After implementing the Scribe node, it's essential to validate its functionality. Run the agent and monitor the notes panel to ensure that notes are being captured and updated correctly. Here's a snippet from the main execution flow:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>    <span class="n">events</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>        <span class="nb">input</span><span class="o">=</span><span class="p">{</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>            <span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="p">[</span>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>                <span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">template</span><span class="p">),</span>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>            <span class="p">]</span>
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>        <span class="p">},</span>
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>        <span class="n">config</span><span class="o">=</span><span class="p">{</span>
+</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>            <span class="s2">&quot;configurable&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;thread_id&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">}</span>
+</span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>        <span class="p">},</span>
+</span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a>        <span class="n">stream_mode</span><span class="o">=</span><span class="s2">&quot;values&quot;</span>
+</span><span id="__span-18-11"><a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>    <span class="p">)</span>
+</span><span id="__span-18-12"><a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a>
+</span><span id="__span-18-13"><a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a>    <span class="c1"># Use Live to update the layout dynamically</span>
+</span><span id="__span-18-14"><a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a>    <span class="k">with</span> <span class="n">Live</span><span class="p">(</span><span class="n">layout</span><span class="p">,</span> <span class="n">console</span><span class="o">=</span><span class="n">console</span><span class="p">,</span> <span class="n">refresh_per_second</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+</span><span id="__span-18-15"><a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a>        <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
+</span><span id="__span-18-16"><a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a>            <span class="k">if</span> <span class="s2">&quot;notes&quot;</span> <span class="ow">in</span> <span class="n">event</span><span class="p">:</span>
+</span><span id="__span-18-17"><a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a>                <span class="c1"># Update the notes content and the right panel</span>
+</span><span id="__span-18-18"><a id="__codelineno-18-18" name="__codelineno-18-18" href="#__codelineno-18-18"></a>                <span class="n">notes_content</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s2">&quot;notes&quot;</span><span class="p">]</span>
+</span><span id="__span-18-19"><a id="__codelineno-18-19" name="__codelineno-18-19" href="#__codelineno-18-19"></a>                <span class="n">layout</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">Panel</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">notes_content</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Notes&quot;</span><span class="p">))</span>
+</span></code></pre></div>
+<p>This block ensures that the notes are displayed in real-time, providing a clear overview of the information being captured.</p>
+<p>Here is a video of the Scribe in action, you can reproduce it by running <code>python src/executor_and_scribe.py</code>:</p>
+<video src="/screencast_offensive_graph.mp4" controls></video>
+
+<h5 id="5-managing-shared-state-with-the-scribe"><a class="toclink" href="../../2024/10/18/the-journey-to-adding-a-scribe/#5-managing-shared-state-with-the-scribe">5. <strong>Managing Shared State with the Scribe</strong></a></h5>
+<p>Let's move from our small example to a more complex one by integrating the Scribe into the <code>plan_and_execute</code> graph:
+Our shared state (<code>PlanExecute</code>) must accommodate the notes taken by the Scribe. Here's the updated structure:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="k">class</span> <span class="nc">PlanExecute</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>    <span class="nb">input</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># the initial user-given objective</span>
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>    <span class="n">plan</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>    <span class="n">past_steps</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">],</span> <span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">]</span>
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>    <span class="n">response</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># response from the agent to the user</span>
+</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>    <span class="n">notes</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># structured notes from the Scribe</span>
+</span></code></pre></div>
+<p>By including the <code>notes</code> field, all nodes within the graph can access and update the notes as required.</p>
+<h5 id="6-enhancing-the-replanner-with-scribe-notes"><a class="toclink" href="../../2024/10/18/the-journey-to-adding-a-scribe/#6-enhancing-the-replanner-with-scribe-notes">6. <strong>Enhancing the Replanner with Scribe Notes</strong></a></h5>
+<p>The Replanner leverages the notes to refine future plans. Here's an excerpt showcasing this integration:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="n">replanner_prompt</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;For the given objective, come up with a simple step by step plan. \</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="sd">This plan should involve individual tasks, that if executed correctly will yield the correct answer. Do not add any superfluous steps. \</span>
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="sd">The result of the final step should be the final answer. Make sure that each step has all the information needed - do not skip steps.</span>
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="sd">Your objective was this:</span>
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="sd">{input}</span>
+</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>
+</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="sd">Your original plan was this:</span>
+</span><span id="__span-20-10"><a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="sd">{plan}</span>
+</span><span id="__span-20-11"><a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a>
+</span><span id="__span-20-12"><a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a><span class="sd">You have currently done the follow steps:</span>
+</span><span id="__span-20-13"><a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a><span class="sd">{past_steps}</span>
+</span><span id="__span-20-14"><a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a>
+</span><span id="__span-20-15"><a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a><span class="sd">Your notes are:</span>
+</span><span id="__span-20-16"><a id="__codelineno-20-16" name="__codelineno-20-16" href="#__codelineno-20-16"></a><span class="sd">{notes}</span>
+</span><span id="__span-20-17"><a id="__codelineno-20-17" name="__codelineno-20-17" href="#__codelineno-20-17"></a>
+</span><span id="__span-20-18"><a id="__codelineno-20-18" name="__codelineno-20-18" href="#__codelineno-20-18"></a><span class="sd">Update your plan accordingly. If no more steps are needed and you can return to the user, then respond with that. Otherwise, fill out the plan. Only add steps to the plan that still NEED to be done. Do not return previously done steps as part of the plan.</span>
+</span><span id="__span-20-19"><a id="__codelineno-20-19" name="__codelineno-20-19" href="#__codelineno-20-19"></a>
+</span><span id="__span-20-20"><a id="__codelineno-20-20" name="__codelineno-20-20" href="#__codelineno-20-20"></a><span class="sd">If you were not able to complete the task, stop after 15 planning steps and give a summary to the user.</span>
+</span><span id="__span-20-21"><a id="__codelineno-20-21" name="__codelineno-20-21" href="#__codelineno-20-21"></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="__span-20-22"><a id="__codelineno-20-22" name="__codelineno-20-22" href="#__codelineno-20-22"></a><span class="p">)</span>
+</span></code></pre></div>
+<p>Notice the inclusion of <code>{notes}</code> in the prompt, allowing the Replanner to make informed decisions based on the accumulated notes.</p>
+<h4 id="conclusion"><a class="toclink" href="../../2024/10/18/the-journey-to-adding-a-scribe/#conclusion">Conclusion</a></h4>
+<p>The addition of the Scribe node has been transformative for our plan-and-execute architecture. By meticulously capturing and managing contextual information, we've not only optimized the performance of our LLMs but also enhanced the system's overall reasoning capabilities. This structured approach to note-taking paves the way for more sophisticated and efficient planning mechanisms, setting the stage for future advancements in our multi-agent architecture.</p>
+<p>As we continue to refine and expand our system, the Scribe will undoubtedly play a pivotal role in ensuring that our agents remain informed, agile, and capable of tackling increasingly complex tasks with unwavering precision.</p>
+    
+  </div>
+</article>
+      
+        <article class="md-post md-post--excerpt">
+  <header class="md-post__header">
+    
+      <nav class="md-post__authors md-typeset">
+        
+          <span class="md-author">
+            <img src="https://avatars.githubusercontent.com/u/20667?v=4" alt="Andreas Happe">
+          </span>
+        
+      </nav>
+    
+    <div class="md-post__meta md-meta">
+      <ul class="md-meta__list">
+        <li class="md-meta__item">
           <time datetime="2024-10-14 00:00:00">October 14, 2024</time></li>
         
           <li class="md-meta__item">
