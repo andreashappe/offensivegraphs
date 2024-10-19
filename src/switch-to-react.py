@@ -1,12 +1,11 @@
 from dotenv import load_dotenv
-from rich.console import Console
 
 from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
 
 from helper.common import get_or_fail
-from helper.ui import print_event_stream
+from helper.log import RichLogger
 from tools.ssh import SshExecuteTool, SshTestCredentialsTool,get_ssh_connection_from_env 
 
 # setup configuration from environment variables
@@ -31,18 +30,17 @@ You are a low-privilege user {username} with password {password} on a linux syst
 Do not repeat already tried escalation attacks. You should focus upon enumeration and privilege escalation. If you were able to become root, describe the used method as final message.
 """).format(username=conn.username, password=conn.password)
 
-if __name__ == '__main__':
 
-    console = Console()
+logger = RichLogger()
 
-    events = agent_executor.stream(
-        {
-            "messages": [
-                ("user", template),
-            ]
-        },
-        stream_mode="values",
-    )
+events = agent_executor.stream(
+    {
+        "messages": [
+            ("user", template),
+        ]
+    },
+    stream_mode="debug",
+)
 
-    # output all the events that we're getting from the agent
-    print_event_stream(console, events)
+for event in events:
+    logger.capture_event(event)

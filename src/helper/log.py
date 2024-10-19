@@ -25,10 +25,22 @@ class RichLogger:
         self.console = Console()
         # todo: create log file path
 
-    def capture_event(self, event):
-        self.events.append(event)
-        # todo: write data to logfile for long-term tracing
+    def process_single_message(self, message):
+        if isinstance(message, ToolMessage):
+            self.console.print(Panel(message.content, title=f"{message.name} answers"))
+        elif isinstance(message, AIMessage):
+            for call in message.tool_calls:
+                self.console.print(Panel(Pretty(call['args']), title=f"Outgoing Tool to {call['name']}"))
+        elif isinstance(message, HumanMessage):
+            self.console.print(Panel(message.content, title="Initial (Human?) Query"))
+        else:
+            self.console.print(Panel(Pretty(message), title="Unknown Message Type!"))
 
+    def process_messages(self, messages):
+        for message in messages:
+            self.process_single_message(message)
+
+    def process_debug_event(self, event):
         if event['type'] == 'task':
             task = Task(event['timestamp'], event['step'], event['payload']['id'], event['payload']['name'], event['payload']['input'])
             self.open_tasks[task.payload_id] = task
@@ -48,12 +60,10 @@ class RichLogger:
             self.console.log(f"finshed task {task.name}")
             if task.name == 'tools':
                 for (type, messages) in event['payload']['result']:
-                    assert(type == 'messages')
                     in_there = False
                     for message in messages:
                         in_there = True
-                        if isinstance(message, ToolMessage):
-                            self.console.print(Panel(message.content, title=f"{message.name} answers"))
+                        self.process_single_message(message)
                     if not in_there:
                         self.console.log(Pretty(messages))
             elif 'messages' in event['payload']['result']:
@@ -62,18 +72,28 @@ class RichLogger:
             else:
                 in_there = False
                 for (type, messages) in event['payload']['result']:
-                    in_there = True
-                    assert(type == 'messages')
-                    for message in messages:
-                        if isinstance(message, AIMessage):
-                            for call in message.tool_calls:
-                                self.console.print(Panel(Pretty(call['args']), title=f"Outgoing Tool to {call['name']}"))
-                        else:
-                            self.console.log(Pretty(message))
+                    if type == 'plan':
+                        in_there = True
+                        self.process_single_message(messages)
+                    else:
+                        for message in messages:
+                            in_there = True
+                            self.process_single_message(message)
                 if not in_there:
                    self.console.log(task.result)
         else:
             self.console.print(Pretty(event))
+
+    def capture_event(self, event):
+        self.events.append(event)
+        # todo: write data to logfile for long-term tracing
+
+        if 'type' in event:
+            self.process_debug_event(event)
+        elif 'messages' in event:
+            self.process_messages(event['messages'])
+        else:
+            self.console.print(Panel(Pretty(event), title="Unknown Event Type!"))
 
     def print_message(self, message):
         if isinstance(message, AIMessage):

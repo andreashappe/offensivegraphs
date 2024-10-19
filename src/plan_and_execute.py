@@ -1,17 +1,14 @@
-import time
-
 from dotenv import load_dotenv
 from graphs.plan_and_execute import PlanExecute
-from rich.console import Console
 
 from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
 
 from helper.common import get_or_fail
-from helper.ui import print_event
-from tools.ssh import get_ssh_connection_from_env, SshTestCredentialsTool, SshExecuteTool
+from helper.log import RichLogger
 from graphs.initial_version import create_chat_tool_agent_graph
 from graphs.plan_and_execute import create_plan_and_execute_graph
+from tools.ssh import get_ssh_connection_from_env, SshTestCredentialsTool, SshExecuteTool
 
 # setup configuration from environment variables
 load_dotenv()
@@ -19,8 +16,8 @@ get_or_fail("OPENAI_API_KEY") # langgraph will use this env variable itself
 conn = get_ssh_connection_from_env()
 conn.connect()
 
-# prepare console
-console = Console()
+# prepare logging
+logger = RichLogger()
 
 # initialize the ChatOpenAI model and register the tool (ssh connection)
 llm = ChatOpenAI(model="gpt-4o", temperature=0)
@@ -48,12 +45,12 @@ def execute_step(state: PlanExecute):
 
     events = graph.stream(
         {"messages": [("user", template)]},
-        stream_mode='values'
+        stream_mode='debug'
     )
 
     agent_response = None
     for event in events:
-        print_event(console, event)
+        logger.capture_event(event)
         agent_response = event
 
     return {
@@ -76,9 +73,9 @@ Do not repeat already tried escalation attacks. You should focus upon enumeratio
 events = app.stream(
     input = {"input": template },
     config = {"recursion_limit": 50},
-    stream_mode = "values"
+    stream_mode = "debug"
 )
 
 # output all occurring logs
 for event in events:
-    print_event(console, event)
+    logger.capture_event(event)
