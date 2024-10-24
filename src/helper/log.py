@@ -108,3 +108,6 @@ class RichLogger:
             self.console.print(Panel(message.content, title="Answer from Tool"))
         else:
             self.console.log(Pretty(message))
+
+    def print_box(self, title, text):
+        self.console.print(Panel(text, title=title))
